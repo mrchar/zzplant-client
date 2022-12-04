@@ -15,9 +15,9 @@
         Options
       </div>
     </div>
-    <div class="w-full max-h-fit bg-blue-400">
+    <div class="w-full max-h-fit bg-white">
       <div class="max-w-7xl">
-        Body
+        <router-view/>
       </div>
     </div>
   </div>
