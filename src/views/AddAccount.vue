@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {ref} from "vue";
 import {AddAccountParams} from "../types/account";
-import {useStore} from "../../store";
+import {useStore} from "../store";
 import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
 
@@ -18,7 +18,7 @@ const addForm = ref<AddAccountParams>({
 const addAccount = () => {
   store.addAccount(addForm.value)
       .then((res) => {
-        router.push({path: "/accounts/detail", params: {id: res.id}})
+        router.push("/accounts/detail?name=" + encodeURI(res.profile.name))
       })
       .catch(error => {
         console.error("添加账户失败", error)

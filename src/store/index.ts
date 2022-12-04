@@ -1,8 +1,22 @@
 import {defineStore} from "pinia";
-import {Account, AddAccountParams, ListAccountsResponse} from "../src/types/account";
+import {Account, AddAccountParams, ListAccountsResponse} from "../types/account";
 
 
 const allAccounts = new Array<Account>()
+
+for (let i = 0; i < 100; i++) {
+    allAccounts.push({
+        id: i.toString(),
+        password: "",
+        profile: {
+            id: i.toString(),
+            name: "用户" + (i + 1),
+            gender: "male",
+            mobileNumber: "1333333" + i.toString().padStart(4, "0")
+        },
+        balance: 100 + i,
+    })
+}
 
 export const useStore = defineStore("main", {
     state: () => ({accounts: allAccounts}),
@@ -32,6 +46,15 @@ export const useStore = defineStore("main", {
                 size: size,
                 total: filteredAccounts.length
             };
+        },
+        async getAccount(name: string): Promise<Account | void> {
+            const account = this.accounts.find(item => {
+                return item.profile.name === name
+            })
+            if (account) {
+                return account
+            }
+
         },
         async addAccount(params: AddAccountParams): Promise<Account> {
             const id = this.accounts.length.toString()

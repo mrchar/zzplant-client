@@ -2,7 +2,7 @@
 import {onMounted, ref} from "vue"
 import Account from "../types/account"
 import {Search} from "@element-plus/icons-vue"
-import {useStore} from "../../store";
+import {useStore} from "../store";
 import {useRouter} from "vue-router";
 
 const store = useStore()
@@ -52,26 +52,31 @@ onMounted(() => {
       <el-button type="primary" size="large" @click="router.push('/accounts/add')">添加</el-button>
     </div>
     <!--Table-->
-    <div class="w-full max-h-fit overflow-auto">
-      <el-table stripe border :data="accounts">
-        <el-table-column label="序号" type="index" width="80"></el-table-column>
-        <el-table-column label="名称" prop="profile.name"></el-table-column>
-        <el-table-column label="手机号码">
-          <template #default="{row}">
-            {{ row.profile.mobileNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1****$3") }}
-          </template>
-        </el-table-column>
-        <el-table-column label="余额">
-          <template #default="{row}">
-            {{ `￥${row.balance}` }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <el-button type="primary" @click="$message('正在开发中...')">查看</el-button>
+    <el-table stripe border :data="accounts">
+      <el-table-column label="序号" type="index" width="80"></el-table-column>
+      <el-table-column label="名称" prop="profile.name"></el-table-column>
+      <el-table-column label="手机号码">
+        <template #default="{row}">
+          {{ row.profile.mobileNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1****$3") }}
+        </template>
+      </el-table-column>
+      <el-table-column label="余额">
+        <template #default="{row}">
+          {{ `￥${row.balance}` }}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template #default="{row}">
+          <el-button
+              type="primary"
+              @click="router.push('/accounts/detail?name='+encodeURI(row.profile.name))"
+          >
+            查看
+          </el-button>
           <el-button @click="$message('正在开发中...')">编辑</el-button>
-        </el-table-column>
-      </el-table>
-    </div>
+        </template>
+      </el-table-column>
+    </el-table>
     <!--Pagination-->
     <el-pagination
         background
