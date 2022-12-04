@@ -1,29 +1,12 @@
 <script lang="ts" setup>
-import {onBeforeMount, onMounted, ref} from "vue"
+import {onMounted, ref} from "vue"
 import Account from "../types/account"
 import {Search} from "@element-plus/icons-vue"
+import {useStore} from "../../store";
+import {useRouter} from "vue-router";
 
-const allAccounts: Array<Account> = []
-
-onBeforeMount(() => {
-  for (let i: number = 0; i < 100; i++) {
-    allAccounts.push(
-        {
-          id: i.toString(),
-          password: "xxxxx",
-          profile: {
-            id: i.toString(),
-            name: "用户" + (i + 1),
-            gender: "男",
-            mobileNumber: "133333333" + i.toString().padStart(2, '0')
-          },
-          balance: i * 10
-        }
-    )
-  }
-})
-
-const filteredAccounts = ref<Array<Account>>([])
+const store = useStore()
+const router = useRouter()
 
 const keyword = ref("")
 
@@ -32,28 +15,18 @@ const accounts = ref<Array<Account>>([])
 const pagination = ref({
   pageSize: 10,
   currentPage: 1,
+  totalElements: 0,
 })
 
 const listAllAccounts = () => {
-  if (!keyword) {
-    filteredAccounts.value = allAccounts;
-  } else {
-    filteredAccounts.value = allAccounts.filter(item => {
-      if (item.profile.mobileNumber.includes(keyword.value)) {
-        return true
-      } else if (item.profile.name.includes(keyword.value)) {
-        return true
-      }
-
-      return false;
-    })
-  }
-
-  const pageSize = pagination.value.pageSize
-  const currentPage = pagination.value.currentPage
-  const start = (currentPage - 1) * pageSize
-  const end = start + pageSize
-  accounts.value = filteredAccounts.value.slice(start, end)
+  store.listAllAccounts(
+      keyword.value,
+      pagination.value.currentPage,
+      pagination.value.pageSize)
+      .then(res => {
+        accounts.value = res.content
+        pagination.value.totalElements = res.total
+      })
 }
 
 onMounted(() => {
@@ -76,7 +49,7 @@ onMounted(() => {
           <el-button @click="listAllAccounts" :icon="Search"/>
         </template>
       </el-input>
-      <el-button type="primary" size="large" @click="$message('正在开发中...')">添加</el-button>
+      <el-button type="primary" size="large" @click="router.push('/accounts/add')">添加</el-button>
     </div>
     <!--Table-->
     <div class="w-full max-h-fit overflow-auto">
@@ -104,7 +77,7 @@ onMounted(() => {
         background
         v-model:page-size="pagination.pageSize"
         v-model:current-page="pagination.currentPage"
-        :total="filteredAccounts.length"
+        :total="pagination.totalElements"
         layout="sizes, prev, pager, next, jumper, ->, total"
         @size-change="listAllAccounts"
         @current-change="listAllAccounts">
