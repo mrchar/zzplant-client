@@ -1,14 +1,20 @@
 <script lang="ts" setup>
 import {onBeforeMount, ref} from "vue"
-import Account from "../types/account"
-import {useStore} from "../store";
-import {useRoute} from "vue-router";
-import {Search} from "@element-plus/icons-vue";
+import {Account} from "../types/account"
+import {minerId, shopId, useStore} from "../store"
+import {useRoute} from "vue-router"
+import {Search} from "@element-plus/icons-vue"
+import {Bill} from "../types/bill"
+import {Transaction} from "../types/transaction"
 
 const nameSuffix = {"male": "先生", "female": "女士"}
 
 const store = useStore()
 const route = useRoute()
+
+const keyword = ref("")
+
+const accountName = ref<string>("")
 
 const account = ref<Account>({
   id: "",
@@ -17,24 +23,41 @@ const account = ref<Account>({
     id: "",
     name: "",
     gender: "",
-    mobileNumber: ""
+    mobileNumber: "",
   },
   balance: 0,
 })
 
-const keyword = ref("")
+const getAccount = () => {
+  store.getAccount(accountName.value)
+      .then((res) => {
+        if (res) {
+          account.value = res
+        }
+      })
+}
 
-const records = ref<any>([])
+const bills = ref<Array<Bill>>([])
 
-for (let i = 0; i < 100; i++) {
-  records.value.push({
-    datetime: new Date(),
-    orderNumber: "xxxxxxxx",
-    type: "decrease", // increase | decrease
-    amount: -48,
-    balance: 100,
-    operatorName: "服务员1"
-  },)
+const listAllBills = () => {
+  store.listAllBills(accountName.value)
+      .then(res => {
+        res.forEach(item => {
+          item.datetime = new Date(item.datetime)
+        })
+        bills.value = res
+      })
+}
+
+const transactions = ref<Array<Transaction>>([])
+const listAllTransactions = () => {
+  store.listAllTransactions(accountName.value)
+      .then(res => {
+        res.forEach(item => {
+          item.datetime = new Date(item.datetime)
+        })
+        transactions.value = res
+      })
 }
 
 const pagination = ref({
@@ -43,22 +66,48 @@ const pagination = ref({
   totalElements: 100,
 })
 
+const showAddCreditsDialog = ref(false)
+const balanceToAdd = ref(0)
+const addCredits = () => {
+  store.transfer(minerId, account.value.id, balanceToAdd.value)
+      .then(() => {
+        listAllBills()
+        listAllTransactions()
+      })
+      .finally(() => {
+        balanceToAdd.value = 0
+        showAddCreditsDialog.value = false
+      })
+}
+
+const showConsumeDialog = ref(false)
+const balanceToPay = ref(0)
+const consume = () => {
+  store.transfer(account.value.id, shopId, balanceToPay.value)
+      .then(() => {
+        listAllBills()
+        listAllTransactions()
+      })
+      .finally(() => {
+        balanceToPay.value = 0
+        showConsumeDialog.value = false
+      })
+}
+
 onBeforeMount(() => {
   const name = route.query.name as string
   if (name) {
-    store.getAccount(name)
-        .then((res) => {
-          if (res) {
-            account.value = res
-          }
-        })
+    accountName.value = name
+    getAccount()
+    listAllBills()
+    listAllTransactions()
   }
-
 })
+
 </script>
 <template>
   <div class="w-full h-full box-border p-6 flex flex-col gap-6">
-    <div class="w-full  ">
+    <div class="w-full">
       <el-descriptions size="large">
         <template #title>
           <div class="font-bold">会员信息</div>
@@ -73,8 +122,8 @@ onBeforeMount(() => {
           {{ "￥" + account.balance }}
         </el-descriptions-item>
         <template #extra>
-          <el-button size="large" type="success" @click="$message('正在开发中...')">充值</el-button>
-          <el-button size="large" type="primary" @click="$message('正在开发中...')">消费</el-button>
+          <el-button size="large" type="success" @click="showAddCreditsDialog=true">充值</el-button>
+          <el-button size="large" type="primary" @click="showConsumeDialog=true">消费</el-button>
         </template>
       </el-descriptions>
     </div>
@@ -90,22 +139,25 @@ onBeforeMount(() => {
         <el-button :icon="Search" @click="$message('正在开发中...')"/>
       </template>
     </el-input>
-    <el-table :data="records" border stripe>
+    <el-table :data="bills" border stripe>
       <el-table-column label="时间">
         <template #default="{row}">
           {{ row.datetime.toLocaleString() }}
         </template>
       </el-table-column>
-      <el-table-column label="订单号" prop="orderNumber"></el-table-column>
+      <el-table-column label="订单号">
+        <template #default="{row}">
+          {{ transactions.find(item => item.id === row.transactionId).number }}
+        </template>
+      </el-table-column>
       <el-table-column label="类型">
         <template #default="{row}">
-          {{ {"increase": "充值", "decrease": "消费"}[row.type] }}
+          {{ row.amount > 0 ? "充值" : "消费" }}
         </template>
       </el-table-column>
       <el-table-column label="金额(￥)" prop="amount">
       </el-table-column>
-      <el-table-column label="余额(￥)" prop="balance"></el-table-column>
-      <el-table-column label="记账人员" prop="operatorName"></el-table-column>
+      <el-table-column label="余额(￥)" prop="currentBalance"></el-table-column>
     </el-table>
     <el-pagination
         background
@@ -114,6 +166,28 @@ onBeforeMount(() => {
         :total="pagination.totalElements"
         layout="sizes, prev, pager, next, jumper, ->, total">
     </el-pagination>
+    <el-dialog v-model="showAddCreditsDialog">
+      <el-form label-width="60">
+        <el-form-item label="金额">
+          <el-input v-model="balanceToAdd"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="addCredits">充值</el-button>
+          <el-button @click="showAddCreditsDialog=false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <el-dialog v-model="showConsumeDialog">
+      <el-form label-width="60">
+        <el-form-item label="金额">
+          <el-input v-model="balanceToPay"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="consume">支付</el-button>
+          <el-button @click="showConsumeDialog=false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 

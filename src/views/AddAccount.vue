@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import {ref} from "vue";
-import {AddAccountParams} from "../types/account";
-import {useStore} from "../store";
-import {useRouter} from "vue-router";
-import {ElMessage} from "element-plus";
+import {ref} from "vue"
+import {AddAccountParams} from "../types/account"
+import {useStore} from "../store"
+import {useRouter} from "vue-router"
+import {ElMessage} from "element-plus"
 
 const store = useStore()
 const router = useRouter()

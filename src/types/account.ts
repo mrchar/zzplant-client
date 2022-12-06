@@ -20,5 +20,3 @@ export interface Account {
     profile: Profile
     balance: number
 }
-
-export default Account
