@@ -2,7 +2,7 @@
 import {onBeforeMount, ref} from "vue"
 import {Account} from "../types/account"
 import {minerId, shopId, useStore} from "../store"
-import {useRoute} from "vue-router"
+import {useRoute, useRouter} from "vue-router"
 import {Search} from "@element-plus/icons-vue"
 import {Bill} from "../types/bill"
 import {Transaction} from "../types/transaction"
@@ -11,6 +11,7 @@ const nameSuffix = {"male": "先生", "female": "女士"}
 
 const store = useStore()
 const route = useRoute()
+const router = useRouter()
 
 const keyword = ref("")
 
@@ -107,6 +108,7 @@ onBeforeMount(() => {
 </script>
 <template>
   <div class="w-full h-full box-border p-6 flex flex-col gap-6">
+    <el-button class="max-w-fit" @click="router.push('/accounts')">返回</el-button>
     <div class="w-full">
       <el-descriptions size="large">
         <template #title>
