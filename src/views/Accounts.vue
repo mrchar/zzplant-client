@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import {onMounted, ref} from "vue"
-import Account from "../types/account"
+import {Account} from "../types/account"
 import {Search} from "@element-plus/icons-vue"
-import {useStore} from "../store";
-import {useRouter} from "vue-router";
+import {useRouter} from "vue-router"
+import api, {ApiError} from "../api"
 
-const store = useStore()
 const router = useRouter()
 
 const keyword = ref("")
@@ -19,13 +18,22 @@ const pagination = ref({
 })
 
 const listAllAccounts = () => {
-  store.listAllAccounts(
-      keyword.value,
-      pagination.value.currentPage,
-      pagination.value.pageSize)
+  api.listAllAccounts({
+    keyword: keyword.value,
+    page: pagination.value.currentPage,
+    size: pagination.value.pageSize,
+  })
       .then(res => {
         accounts.value = res.content
         pagination.value.totalElements = res.total
+      })
+      .catch(error => {
+        if (error instanceof ApiError && error.message === "读取用户信息失败") {
+          router.push("/shops/add")
+          return
+        }
+
+        throw error
       })
 }
 

@@ -1,22 +1,22 @@
 <script lang="ts" setup>
 import {onBeforeMount, ref} from "vue"
 import {Account} from "../types/account"
-import {minerId, shopId, useStore} from "../store"
 import {useRoute, useRouter} from "vue-router"
 import {Search} from "@element-plus/icons-vue"
 import {Bill} from "../types/bill"
+import api from "../api"
 import {Transaction} from "../types/transaction"
+import {ElMessage} from "element-plus"
 
+const shopId = "0"
 const nameSuffix = {"male": "先生", "female": "女士"}
 
-const store = useStore()
 const route = useRoute()
 const router = useRouter()
 
 const keyword = ref("")
 
 const accountName = ref<string>("")
-
 const account = ref<Account>({
   id: "",
   password: "",
@@ -30,34 +30,40 @@ const account = ref<Account>({
 })
 
 const getAccount = () => {
-  store.getAccount(accountName.value)
+  api.getAccount({name: accountName.value})
       .then((res) => {
         if (res) {
           account.value = res
+          listAllBills()
         }
       })
 }
 
-const bills = ref<Array<Bill>>([])
-
-const listAllBills = () => {
-  store.listAllBills(accountName.value)
-      .then(res => {
-        res.forEach(item => {
-          item.datetime = new Date(item.datetime)
-        })
-        bills.value = res
-      })
+interface BillWithTransaction extends Bill {
+  transaction: Transaction,
 }
 
-const transactions = ref<Array<Transaction>>([])
-const listAllTransactions = () => {
-  store.listAllTransactions(accountName.value)
+const bills = ref<Array<BillWithTransaction>>([])
+
+const listAllBills = () => {
+  api.listAllBills({
+    accountId: account.value.id,
+    page: pagination.value.currentPage,
+    size: pagination.value.pageSize,
+  })
       .then(res => {
-        res.forEach(item => {
+        bills.value = res.content.map(item => item as BillWithTransaction)
+        pagination.value.totalElements = res.total
+
+        bills.value.forEach(item => {
           item.datetime = new Date(item.datetime)
+          api.getTransaction({id: item.transactionId})
+              .then((res) => {
+                if (res) {
+                  item.transaction = res
+                }
+              })
         })
-        transactions.value = res
       })
 }
 
@@ -70,10 +76,12 @@ const pagination = ref({
 const showAddCreditsDialog = ref(false)
 const balanceToAdd = ref(0)
 const addCredits = () => {
-  store.transfer(minerId, account.value.id, balanceToAdd.value)
+  api.transfer({from: shopId, to: account.value.id, balance: balanceToAdd.value})
       .then(() => {
-        listAllBills()
-        listAllTransactions()
+        getAccount()
+      })
+      .catch(error => {
+        ElMessage({message: error.message, type: "error"})
       })
       .finally(() => {
         balanceToAdd.value = 0
@@ -84,10 +92,12 @@ const addCredits = () => {
 const showConsumeDialog = ref(false)
 const balanceToPay = ref(0)
 const consume = () => {
-  store.transfer(account.value.id, shopId, balanceToPay.value)
+  api.transfer({from: account.value.id, to: shopId, balance: balanceToPay.value})
       .then(() => {
-        listAllBills()
-        listAllTransactions()
+        getAccount()
+      })
+      .catch(error => {
+        ElMessage({message: error.message, type: "error"})
       })
       .finally(() => {
         balanceToPay.value = 0
@@ -100,12 +110,11 @@ onBeforeMount(() => {
   if (name) {
     accountName.value = name
     getAccount()
-    listAllBills()
-    listAllTransactions()
   }
 })
 
 </script>
+
 <template>
   <div class="w-full h-full box-border p-6 flex flex-col gap-6">
     <el-button class="max-w-fit" @click="router.push('/accounts')">返回</el-button>
@@ -147,10 +156,7 @@ onBeforeMount(() => {
           {{ row.datetime.toLocaleString() }}
         </template>
       </el-table-column>
-      <el-table-column label="订单号">
-        <template #default="{row}">
-          {{ transactions.find(item => item.id === row.transactionId).number }}
-        </template>
+      <el-table-column label="订单号" prop="transaction.number">
       </el-table-column>
       <el-table-column label="类型">
         <template #default="{row}">
@@ -166,7 +172,10 @@ onBeforeMount(() => {
         v-model:page-size="pagination.pageSize"
         v-model:current-page="pagination.currentPage"
         :total="pagination.totalElements"
-        layout="sizes, prev, pager, next, jumper, ->, total">
+        layout="sizes, prev, pager, next, jumper, ->, total"
+        @current-change="listAllBills"
+        @size-change="listAllBills"
+    >
     </el-pagination>
     <el-dialog v-model="showAddCreditsDialog">
       <el-form label-width="60">

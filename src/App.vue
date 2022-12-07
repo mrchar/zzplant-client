@@ -1,14 +1,4 @@
-<script lang="ts" setup>
-import {useStore} from "./store"
-import {onBeforeMount} from "vue"
-
-const store = useStore()
-
-onBeforeMount(() => {
-  store.loadData()
-})
-
-</script>
+<script lang="ts" setup></script>
 
 <template>
   <div class="w-screen h-screen overflow-hidden flex flex-col gap-4 bg-zinc-100">

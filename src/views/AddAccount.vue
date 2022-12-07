@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import {ref} from "vue"
-import {AddAccountParams} from "../types/account"
-import {useStore} from "../store"
 import {useRouter} from "vue-router"
 import {ElMessage} from "element-plus"
+import api, {AddAccountParams} from "../api"
 
-const store = useStore()
 const router = useRouter()
 
 const addForm = ref<AddAccountParams>({
@@ -16,7 +14,7 @@ const addForm = ref<AddAccountParams>({
 })
 
 const addAccount = () => {
-  store.addAccount(addForm.value)
+  api.addAccount(addForm.value)
       .then((res) => {
         router.push("/accounts/detail?name=" + encodeURI(res.profile.name))
       })
