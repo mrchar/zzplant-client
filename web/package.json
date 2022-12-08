@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/core": "^4.6.1",
     "@element-plus/icons-vue": "^2.0.10",
     "element-plus": "^2.2.26",
     "pinia": "^2.0.27",
@@ -16,6 +17,7 @@
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
+    "@capacitor/cli": "^4.6.1",
     "@vitejs/plugin-vue": "^3.2.0",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.19",
