@@ -9,7 +9,7 @@ import {Transaction} from "../types/transaction"
 import {ElMessage} from "element-plus"
 
 const shopId = "0"
-const nameSuffix = {"male": "先生", "female": "女士"}
+const nameSuffix = new Map([["male", "先生"], ["female", "女士"]])
 
 const route = useRoute()
 const router = useRouter()
@@ -124,7 +124,7 @@ onBeforeMount(() => {
           <div class="font-bold">会员信息</div>
         </template>
         <el-descriptions-item label="称呼">
-          {{ account.profile.name + (" " + nameSuffix[account.profile.gender] || "") }}
+          {{ account.profile.name + (" " + nameSuffix.get(account.profile.gender) || "") }}
         </el-descriptions-item>
         <el-descriptions-item label="手机号码">
           {{ account.profile.mobileNumber }}
@@ -144,10 +144,10 @@ onBeforeMount(() => {
         placeholder="输入消费日期或订单号搜索"
         size="large"
         class="max-w-lg"
-        @keyup.enter="$message('正在开发中...')"
+        @keyup.enter="ElMessage('正在开发中...')"
     >
       <template #append>
-        <el-button :icon="Search" @click="$message('正在开发中...')"/>
+        <el-button :icon="Search" @click="ElMessage('正在开发中...')"/>
       </template>
     </el-input>
     <el-table :data="bills" border stripe>
