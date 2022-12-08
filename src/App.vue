@@ -4,6 +4,7 @@ import {Setting} from "@element-plus/icons-vue"
 import I18n from "./components/I18n.vue"
 import {en, zhCn} from "element-plus/es/locale/index"
 import {computed, ref} from "vue"
+import {ElMessage} from "element-plus"
 
 const language = ref("zh-cn")
 
@@ -50,8 +51,8 @@ const locale = computed(() => {
             </el-icon>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="$message('正在开发中...')">店铺设置</el-dropdown-item>
-                <el-dropdown-item @click="$message('正在开发中...')">切换店铺</el-dropdown-item>
+                <el-dropdown-item @click="ElMessage('正在开发中...')">店铺设置</el-dropdown-item>
+                <el-dropdown-item @click="ElMessage('正在开发中...')">切换店铺</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>

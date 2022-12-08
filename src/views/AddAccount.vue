@@ -57,7 +57,7 @@ const addAccount = () => {
       </el-form-item>
       <el-form-item>
         <el-button @click="addAccount" type="primary">添加</el-button>
-        <el-button @click="router.go(-1)||router.push('/accounts')">取消</el-button>
+        <el-button @click="router.push('/accounts')">取消</el-button>
       </el-form-item>
     </el-form>
   </div>

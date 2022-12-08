@@ -4,6 +4,7 @@ import {Account} from "../types/account"
 import {Search} from "@element-plus/icons-vue"
 import {useRouter} from "vue-router"
 import api, {ApiError} from "../api"
+import {ElMessage} from "element-plus"
 
 const router = useRouter()
 
@@ -81,7 +82,7 @@ onMounted(() => {
           >
             查看
           </el-button>
-          <el-button @click="$message('正在开发中...')">编辑</el-button>
+          <el-button @click="ElMessage('正在开发中...')">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
