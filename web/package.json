@@ -9,7 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^4.6.1",
     "@capacitor/core": "^4.6.1",
+    "@capacitor/ios": "^4.6.1",
     "@element-plus/icons-vue": "^2.0.10",
     "element-plus": "^2.2.26",
     "pinia": "^2.0.27",
