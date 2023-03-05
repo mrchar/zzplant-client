@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 
 import {computed, ref} from "vue"
-import {useDark} from "@vueuse/core"
-import {Setting} from "@element-plus/icons-vue"
+import {useDark, useToggle} from "@vueuse/core"
+import {Moon, Setting, Sunny} from "@element-plus/icons-vue"
 import {en, zhCn} from "element-plus/es/locale/index"
 import {ElMessage} from "element-plus"
 import I18n from "./components/I18n.vue"
 import "element-plus/theme-chalk/dark/css-vars.css"
 
 const isDark = useDark()
+const toggleDark = useToggle(isDark)
 
 const language = ref("zh-cn")
 
@@ -28,6 +29,10 @@ const locale = computed(() => {
           Logo
         </div>
         <div class="flex gap-4">
+          <el-icon class="text-2xl text-zinc-800" @click="toggleDark()">
+            <Moon v-show="isDark"/>
+            <Sunny v-show="!isDark"/>
+          </el-icon>
           <el-dropdown size="large">
             <el-icon class="text-2xl text-zinc-800">
               <I18n/>
