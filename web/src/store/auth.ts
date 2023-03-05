@@ -7,18 +7,27 @@ export type AuthenticationStatus = "Unknown" | "Authenticated" | "Unauthenticate
 
 export const useAuth = defineStore("auth", () => {
     let interval: NodeJS.Timeout | string | number | undefined
+
     const profile = ref<Profile | null>(null)
+
+    const setProfile = (data: Profile) => {
+        profile.value = data
+    }
+
     const authenticated = ref<AuthenticationStatus>("Unknown")
-    const setAuthenticated = async (status: AuthenticationStatus) => {
+
+    const setAuthenticated = (status: AuthenticationStatus) => {
         if (status === "Authenticated") {
-            profile.value = await api.auth.getProfile()
             authenticated.value = "Authenticated"
+
             interval = setInterval(() => {
                 api.auth.getProfile()
                     .then(res => {
                         profile.value = res
+                        authenticated.value = "Authenticated"
                     })
                     .catch(() => {
+                        clearInterval(interval)
                         profile.value = null
                         authenticated.value = "Unauthenticated"
                     })
@@ -32,6 +41,7 @@ export const useAuth = defineStore("auth", () => {
 
     return {
         profile,
+        setProfile,
         authenticated,
         setAuthenticated,
     }

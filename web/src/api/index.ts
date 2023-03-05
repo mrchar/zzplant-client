@@ -6,9 +6,11 @@ import auth from "./auth"
 
 axios.defaults.baseURL = "http://127.0.0.1:8080/api/"
 axios.defaults.withCredentials = true
-axios.interceptors.request.use((res) => {
-    return res.data
-})
+axios.interceptors.response.use(
+    (res) => {
+        return res.data
+    },
+)
 
 export class ApiError extends Error {
 }
