@@ -6,6 +6,7 @@ import {Setting} from "@element-plus/icons-vue"
 import {en, zhCn} from "element-plus/es/locale/index"
 import {ElMessage} from "element-plus"
 import I18n from "./components/I18n.vue"
+import "element-plus/theme-chalk/dark/css-vars.css"
 
 const isDark = useDark()
 
@@ -21,8 +22,8 @@ const locale = computed(() => {
 
 <template>
   <el-config-provider :locale="locale">
-    <div class="w-screen h-screen overflow-hidden flex flex-col gap-2 bg-zinc-100">
-      <div class="box-border p-4 w-full flex justify-between bg-white">
+    <div class="w-screen h-screen overflow-hidden flex flex-col gap-2">
+      <div class="box-border p-4 w-full flex justify-between">
         <div>
           Logo
         </div>
@@ -61,7 +62,7 @@ const locale = computed(() => {
           </el-dropdown>
         </div>
       </div>
-      <div class="flex-1 w-full h-96 max-w-7xl mx-auto bg-white">
+      <div class="flex-1 w-full h-96 max-w-7xl mx-auto">
         <router-view/>
       </div>
     </div>
