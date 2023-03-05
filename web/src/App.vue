@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 
-import {Setting} from "@element-plus/icons-vue"
-import I18n from "./components/I18n.vue"
-import {en, zhCn} from "element-plus/es/locale/index"
 import {computed, ref} from "vue"
+import {useDark} from "@vueuse/core"
+import {Setting} from "@element-plus/icons-vue"
+import {en, zhCn} from "element-plus/es/locale/index"
 import {ElMessage} from "element-plus"
+import I18n from "./components/I18n.vue"
+
+const isDark = useDark()
 
 const language = ref("zh-cn")
 
