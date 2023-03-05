@@ -6,3 +6,4 @@ export interface Account {
     profile: Profile
     balance: number
 }
+

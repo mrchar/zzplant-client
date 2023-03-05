@@ -1,6 +1,14 @@
+import axios from "axios"
 import {Account} from "../types/account"
 import {Bill} from "../types/bill"
 import {Transaction} from "../types/transaction"
+import auth from "./auth"
+
+axios.defaults.baseURL = "http://127.0.0.1:8080/api/"
+axios.defaults.withCredentials = true
+axios.interceptors.request.use((res) => {
+    return res.data
+})
 
 export class ApiError extends Error {
 }
@@ -370,6 +378,7 @@ export const transfer = async (params: TransferParams) => {
 }
 
 export default {
+    auth,
     listAllAccounts,
     getAccount,
     addAccount,
