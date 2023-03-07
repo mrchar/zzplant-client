@@ -2,21 +2,23 @@
 import {ref} from "vue"
 import {useRouter} from "vue-router"
 import {ElMessage} from "element-plus"
-import api, {AddAccountParams} from "../api"
+import api, {AddShopParams} from "../api"
+import {useShop} from "../store/shop"
+
+const store = useShop()
 
 const router = useRouter()
 
-const addForm = ref<AddAccountParams>({
+const addForm = ref<AddShopParams>({
   name: "",
-  gender: "male",
-  mobileNumber: "",
-  initBalance: 0,
+  address: "",
 })
 
 const addAccount = () => {
-  api.addShop(addForm.value)
-      .then(() => {
-        router.push("/accounts")
+  api.shop.addShop(addForm.value)
+      .then((added) => {
+        store.selectShop(added)
+        router.push("/crossroad")
       })
       .catch(error => {
         console.error("创建店铺失败", error)
@@ -33,20 +35,13 @@ const addAccount = () => {
     </div>
     <el-form class="max-w-lg mx-auto" label-width="100px">
       <el-form-item label="店铺名称">
-        <el-input v-model="addForm.name" placeholder="请输入店铺的名字">
-        </el-input>
+        <el-input v-model="addForm.name" placeholder="请输入店铺的名字"/>
       </el-form-item>
-      <el-form-item label="手机号码">
-        <el-input v-model="addForm.mobileNumber" placeholder="请输入店铺老板的手机号码">
-          <template #prepend>
-            <el-select class="w-20" model-value="+86">
-              <el-option value="+86">+86</el-option>
-            </el-select>
-          </template>
-        </el-input>
+      <el-form-item label="所在地址">
+        <el-input v-model="addForm.address" type="textarea" placeholder="请输入店铺所在的地址"/>
       </el-form-item>
       <el-form-item>
-        <el-button @click="addAccount" type="primary">创建</el-button>
+        <el-button type="primary" @click="addAccount">创建</el-button>
       </el-form-item>
     </el-form>
   </div>
