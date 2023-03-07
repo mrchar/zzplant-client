@@ -28,7 +28,7 @@ const addAccount = () => {
 <template>
   <div class="w-full h-full box-border p-6 pr-12 flex flex-col gap-6">
     <div class="max-w-lg mx-auto font-bold">请创建店铺</div>
-    <div class="max-w-lg mx-auto">
+    <div class="max-w-lg pl-8 pr-4 mx-auto text-center">
       在开始一切之前，您必须先创建店铺，随后不断为您的店铺添加会员。
     </div>
     <el-form class="max-w-lg mx-auto" label-width="100px">

@@ -17,8 +17,6 @@ const locale = computed(() => {
   if (language.value === "zh-cn") return zhCn
   if (language.value === "en") return en
 })
-
-
 </script>
 
 <template>
