@@ -3,9 +3,12 @@ import {Account} from "../types/account"
 import {Bill} from "../types/bill"
 import {Transaction} from "../types/transaction"
 import auth from "./auth"
+import shop from "./shop"
 
 axios.defaults.baseURL = "http://127.0.0.1:8080/api/"
 axios.defaults.withCredentials = true
+axios.defaults.xsrfCookieName = "XSRF-TOKEN"
+axios.defaults.xsrfHeaderName = "X-XSRF-TOKEN"
 axios.interceptors.response.use(
     (res) => {
         return res.data
@@ -155,34 +158,6 @@ export const addAccount = async (params: AddAccountParams): Promise<Account> => 
 
     return account
 }
-
-export const addShop = async (params: AddAccountParams): Promise<Account> => {
-    const allAccounts = new Array<Account>()
-
-    const id = allAccounts.length.toString()
-    const account = {
-        id: id,
-        password: "",
-        profile: {
-            id: id,
-            name: params.name,
-            gender: params.gender,
-            mobileNumber: params.mobileNumber,
-        },
-        balance: 0,
-    }
-    allAccounts.push(account)
-    await saveAllAccounts(allAccounts)
-
-    const allBills = new Array<Bill>()
-    await saveAllBills(allBills)
-
-    const allTransactions = new Array<Transaction>()
-    await saveAllTransactions(allTransactions)
-
-    return account
-}
-
 
 const loadAllBills = async (): Promise<Array<Bill>> => {
     const billsString = window.localStorage.getItem("bills")
@@ -379,12 +354,14 @@ export const transfer = async (params: TransferParams) => {
     await saveAllBills(allBills)
 }
 
+export type {AddShopParams} from "./shop"
+
 export default {
     auth,
+    shop,
     listAllAccounts,
     getAccount,
     addAccount,
-    addShop,
     listAllBills,
     listAllTransactions,
     getTransaction,
