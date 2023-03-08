@@ -2,7 +2,7 @@ import axios from "axios"
 import {Shop} from "../types"
 import {PagedResponse} from "./base"
 
-export async function getShop(): Promise<PagedResponse<Shop>> {
+export async function listShops(): Promise<PagedResponse<Shop>> {
     return await axios.get("/shops")
 }
 
@@ -16,7 +16,7 @@ export async function addShop(params: AddShopParams): Promise<Shop> {
 }
 
 export const shop = {
-    getShop,
+    listShops,
     addShop,
 }
 

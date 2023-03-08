@@ -3,15 +3,29 @@ import {useShop} from "../store/shop"
 import {storeToRefs} from "pinia"
 import {useRouter} from "vue-router"
 import {Shop} from "../types"
+import {onMounted} from "vue"
+import api from "../api"
 
 const store = useShop()
 const router = useRouter()
 
 const {shops} = storeToRefs(store)
 
-if (!store.shops || store.shops.length === 0) {
-  router.push("/crossroad")
-}
+onMounted(() => {
+  if (!store.shops || store.shops.length === 0) {
+    api.shop.listShops()
+        .then(res => {
+          if (res.empty) {
+            router.push("/shops/add")
+            return
+          }
+
+          const shops = res.content
+          store.setShops(shops)
+        })
+  }
+})
+
 
 const onSelectShop = (shop: Shop) => {
   store.selectShop(shop)
@@ -21,7 +35,7 @@ const onSelectShop = (shop: Shop) => {
 </script>
 
 <template>
-  <div class="px-8 py-16 flex flex-col gap-2 overflow-y-auto">
+  <div class="px-8 py-16 flex flex-col gap-4 overflow-y-auto">
     <el-button
         class="w-full"
         size="large"
@@ -31,7 +45,7 @@ const onSelectShop = (shop: Shop) => {
     >
       {{ shop.name }}
     </el-button>
-    <el-button class="w-full" size="large" @click="router.push('/shops/add')">
+    <el-button class="w-full mt-8" size="large" @click="router.push('/shops/add')">
       新增
     </el-button>
   </div>

@@ -17,7 +17,7 @@ onMounted(() => {
   }
 
   // 如果当前没有选择店铺
-  api.shop.getShop()
+  api.shop.listShops()
       .then(res => {
         if (!res.empty) {
           store.setShops(res.content)
