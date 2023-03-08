@@ -16,7 +16,7 @@ const addForm = ref<AddAccountParams>({
 const addAccount = () => {
   api.addAccount(addForm.value)
       .then((res) => {
-        router.push("/accounts/detail?name=" + encodeURI(res.profile.name))
+        router.push("/shop-accounts/detail?name=" + encodeURI(res.profile.name))
       })
       .catch(error => {
         console.error("添加账户失败", error)
@@ -27,7 +27,7 @@ const addAccount = () => {
 
 <template>
   <div class="w-full h-full box-border p-6 pr-12">
-    <el-button @click="router.push('/accounts')">返回</el-button>
+    <el-button @click="router.push('/shop-accounts')">返回</el-button>
     <el-form class="max-w-lg mx-auto" label-width="100px">
       <el-form-item label="称呼">
         <el-input v-model="addForm.name" placeholder="请输入会员姓名">
@@ -57,7 +57,7 @@ const addAccount = () => {
       </el-form-item>
       <el-form-item>
         <el-button @click="addAccount" type="primary">添加</el-button>
-        <el-button @click="router.push('/accounts')">取消</el-button>
+        <el-button @click="router.push('/shop-accounts')">取消</el-button>
       </el-form-item>
     </el-form>
   </div>

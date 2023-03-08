@@ -12,7 +12,7 @@ const loading = ref(true)
 
 onMounted(() => {
   if (store.selected != null) {
-    router.push("/accounts")
+    router.push("/shop-accounts")
     return
   }
 

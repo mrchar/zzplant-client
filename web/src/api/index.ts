@@ -30,12 +30,6 @@ interface PaginationResponse {
     total: number
 }
 
-
-export interface ListAllAccountsParams extends PaginationParams {
-    keyword: string,
-}
-
-
 export interface ListAccountsResponse extends PaginationResponse {
     content: Array<Account>,
 
@@ -59,49 +53,6 @@ const loadAllAccounts = async (): Promise<Array<Account>> => {
 const saveAllAccounts = async (accounts: Array<Account>) => {
     const accountsString = JSON.stringify(accounts)
     window.localStorage.setItem("accounts", accountsString)
-}
-
-
-// 获取所有的账户
-export const listAllAccounts = async (params: ListAllAccountsParams): Promise<ListAccountsResponse> => {
-    const allAccounts = await loadAllAccounts()
-    if (!allAccounts) {
-        return {
-            content: new Array<Account>(),
-            page: params.page,
-            size: params.size,
-            total: 0,
-        }
-    }
-
-    const start = (params.page - 1) * params.size
-    const end = start + params.size
-
-    if (!params.keyword) {
-        return {
-            content: allAccounts.slice(start, end),
-            page: params.page,
-            size: params.size,
-            total: allAccounts.length,
-        }
-    }
-
-    const filteredAccounts = allAccounts.filter(item => {
-        if (item.profile.mobileNumber.includes(params.keyword)) {
-            return true
-        } else if (item.profile.name.includes(params.keyword)) {
-            return true
-        }
-
-        return false
-    })
-
-    return {
-        content: filteredAccounts.slice(start, end),
-        page: params.page,
-        size: params.size,
-        total: filteredAccounts.length,
-    }
 }
 
 interface GetAccountParams {
@@ -359,7 +310,6 @@ export type {AddShopParams} from "./shop"
 export default {
     auth,
     shop,
-    listAllAccounts,
     getAccount,
     addAccount,
     listAllBills,

@@ -117,7 +117,7 @@ onBeforeMount(() => {
 
 <template>
   <div class="w-full h-full box-border p-6 flex flex-col gap-6">
-    <el-button class="max-w-fit" @click="router.push('/accounts')">返回</el-button>
+    <el-button class="max-w-fit" @click="router.push('/shop-accounts')">返回</el-button>
     <div class="w-full">
       <el-descriptions size="large">
         <template #title>

@@ -1,16 +1,19 @@
 <script lang="ts" setup>
 import {onMounted, ref} from "vue"
-import {Account} from "../types/account"
 import {Search} from "@element-plus/icons-vue"
 import {useRouter} from "vue-router"
 import api, {ApiError} from "../api"
 import {ElMessage} from "element-plus"
+import {useShop} from "../store/shop"
+import {ShopAccount} from "../types"
+
+const store = useShop()
 
 const router = useRouter()
 
 const keyword = ref("")
 
-const accounts = ref<Array<Account>>([])
+const accounts = ref<Array<ShopAccount>>([])
 
 const pagination = ref({
   pageSize: 10,
@@ -18,15 +21,11 @@ const pagination = ref({
   totalElements: 0,
 })
 
-const listAllAccounts = () => {
-  api.listAllAccounts({
-    keyword: keyword.value,
-    page: pagination.value.currentPage,
-    size: pagination.value.pageSize,
-  })
+const listAllAccounts = (shopCode: string) => {
+  api.shop.listShopAccounts(shopCode)
       .then(res => {
         accounts.value = res.content
-        pagination.value.totalElements = res.total
+        pagination.value.totalElements = res.totalElements
       })
       .catch(error => {
         if (error instanceof ApiError && error.message === "读取用户信息失败") {
@@ -39,7 +38,12 @@ const listAllAccounts = () => {
 }
 
 onMounted(() => {
-  listAllAccounts()
+  if (!store.selected) {
+    router.push("/shops/select")
+    return
+  }
+
+  listAllAccounts(store.selected.code)
 })
 </script>
 
@@ -58,7 +62,7 @@ onMounted(() => {
           <el-button @click="listAllAccounts" :icon="Search"/>
         </template>
       </el-input>
-      <el-button type="primary" size="large" @click="router.push('/accounts/add')">添加</el-button>
+      <el-button type="primary" size="large" @click="router.push('/shop-accounts/add')">添加</el-button>
     </div>
     <!--Table-->
     <el-table stripe border :data="accounts">
@@ -78,7 +82,7 @@ onMounted(() => {
         <template #default="{row}">
           <el-button
               type="primary"
-              @click="router.push('/accounts/detail?name='+encodeURI(row.profile.name))"
+              @click="router.push('/shop-accounts/detail?name='+encodeURI(row.profile.name))"
           >
             查看
           </el-button>
