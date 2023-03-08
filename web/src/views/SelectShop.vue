@@ -36,18 +36,23 @@ const onSelectShop = (shop: Shop) => {
 
 <template>
   <div class="px-8 py-16 flex flex-col gap-4 overflow-y-auto">
-    <el-button
-        class="w-full"
-        size="large"
+    <el-card
         v-for="shop in shops"
         :key="shop.code"
         @click="onSelectShop(shop)"
     >
-      {{ shop.name }}
-    </el-button>
-    <el-button class="w-full mt-8" size="large" @click="router.push('/shops/add')">
-      新增
-    </el-button>
+      <el-descriptions :column="1">
+        <el-descriptions-item label="名称:">
+          {{ shop.name }}
+        </el-descriptions-item>
+        <el-descriptions-item label="地址:">
+          {{ shop.address }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-card>
+    <el-card class="mt-4" size="large" @click="router.push('/shops/add')">
+      添加
+    </el-card>
   </div>
 </template>
 

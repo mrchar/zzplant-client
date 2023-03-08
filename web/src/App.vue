@@ -35,9 +35,9 @@ const locale = computed(() => {
   <el-config-provider :locale="locale">
     <div class="w-screen h-screen overflow-hidden flex flex-col gap-2">
       <div class="box-border p-4 w-full flex justify-between">
-        <div v-if="shop">
+        <el-button v-if="shop" link @click="router.push('/shops/select')">
           {{ shop.name }}
-        </div>
+        </el-button>
         <el-button v-else link @click="router.push('/shops/select')">
           选择商铺
         </el-button>
