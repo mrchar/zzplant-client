@@ -7,6 +7,18 @@ import {en, zhCn} from "element-plus/es/locale/index"
 import {ElMessage} from "element-plus"
 import I18n from "./components/I18n.vue"
 import "element-plus/theme-chalk/dark/css-vars.css"
+import {useShop} from "./store/shop"
+import {useRouter} from "vue-router"
+
+const store = useShop()
+const shop = computed(() => {
+  if (store.selected) {
+    return store.selected
+  }
+  return null
+})
+
+const router = useRouter()
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
@@ -23,8 +35,11 @@ const locale = computed(() => {
   <el-config-provider :locale="locale">
     <div class="w-screen h-screen overflow-hidden flex flex-col gap-2">
       <div class="box-border p-4 w-full flex justify-between">
-        <div>
-          Logo
+        <div v-if="shop">
+          {{ shop.name }}
+        </div>
+        <div v-else>
+          未选择
         </div>
         <div class="flex gap-4">
           <el-icon class="text-2xl text-zinc-800" @click="toggleDark()">
@@ -59,7 +74,7 @@ const locale = computed(() => {
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="ElMessage('正在开发中...')">店铺设置</el-dropdown-item>
-                <el-dropdown-item @click="ElMessage('正在开发中...')">切换店铺</el-dropdown-item>
+                <el-dropdown-item @click="router.push('/shops/select')">切换店铺</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>

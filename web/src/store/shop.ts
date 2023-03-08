@@ -22,7 +22,7 @@ export const useShop = defineStore("shop", () => {
 
     const selected = ref<Shop | null>()
 
-    const selectShop = (params: Shop) => {
+    const selectShop = (params: Shop | null) => {
         selected.value = params
         saveSelected()
     }
