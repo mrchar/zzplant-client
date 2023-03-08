@@ -35,12 +35,12 @@ const locale = computed(() => {
   <el-config-provider :locale="locale">
     <div class="w-screen h-screen overflow-hidden flex flex-col gap-2">
       <div class="box-border p-4 w-full flex justify-between">
-        <el-button v-if="shop" link @click="router.push('/shops/select')">
+        <div v-if="shop">
           {{ shop.name }}
-        </el-button>
-        <el-button v-else link @click="router.push('/shops/select')">
-          选择商铺
-        </el-button>
+        </div>
+        <div v-else>
+          未选择
+        </div>
         <div class="flex gap-4">
           <el-icon class="text-2xl text-zinc-800" @click="toggleDark()">
             <Moon v-show="isDark"/>
@@ -74,7 +74,7 @@ const locale = computed(() => {
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="ElMessage('正在开发中...')">店铺设置</el-dropdown-item>
-                <el-dropdown-item @click="ElMessage('正在开发中...')">切换店铺</el-dropdown-item>
+                <el-dropdown-item @click="router.push('/shops/select')">切换店铺</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
