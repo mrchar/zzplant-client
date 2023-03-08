@@ -55,22 +55,6 @@ const saveAllAccounts = async (accounts: Array<Account>) => {
     window.localStorage.setItem("accounts", accountsString)
 }
 
-interface GetAccountParams {
-    name: string,
-}
-
-// 查询账户
-export const getAccount = async (params: GetAccountParams): Promise<Account | void> => {
-    const allAccounts = await loadAllAccounts()
-    const account = allAccounts.find(item => {
-        return item.profile.name === params.name
-    })
-
-    if (account) {
-        return account
-    }
-}
-
 const loadAllBills = async (): Promise<Array<Bill>> => {
     const billsString = window.localStorage.getItem("bills")
     if (!billsString) {
@@ -88,39 +72,6 @@ const loadAllBills = async (): Promise<Array<Bill>> => {
 const saveAllBills = async (bills: Array<Bill>) => {
     const billsString = JSON.stringify(bills)
     window.localStorage.setItem("bills", billsString)
-}
-
-interface ListAllBillsParams extends PaginationParams {
-    accountId: string
-}
-
-interface ListBillsResponse extends PaginationResponse {
-    content: Array<Bill>
-}
-
-export const listAllBills = async (params: ListAllBillsParams): Promise<ListBillsResponse> => {
-    const allBills = await loadAllBills()
-    if (!allBills) {
-        return {
-            content: new Array<Bill>(),
-            page: params.page,
-            size: params.size,
-            total: 0,
-        }
-    }
-
-    const filteredBills = allBills.filter(item => item.accountId === params.accountId)
-
-    const start = (params.page - 1) * params.size
-    const end = start + params.size
-
-    return {
-        content: filteredBills.slice(start, end),
-        page: params.page,
-        size: params.size,
-        total: filteredBills.length,
-    }
-
 }
 
 const loadAllTransactions = async (): Promise<Array<Transaction>> => {
@@ -271,8 +222,6 @@ export type {AddShopParams} from "./shop"
 export default {
     auth,
     shop,
-    getAccount,
-    listAllBills,
     listAllTransactions,
     getTransaction,
     transfer,

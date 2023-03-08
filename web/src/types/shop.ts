@@ -9,6 +9,7 @@ export interface Shop {
 export interface ShopAccount {
     code: string
     name: string
+    gender: string
     phoneNumber: string
     balance: number
     shop: string

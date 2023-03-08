@@ -66,11 +66,11 @@ onMounted(() => {
     </div>
     <!--Table-->
     <el-table stripe border :data="accounts">
-      <el-table-column label="序号" type="index" width="80"></el-table-column>
-      <el-table-column label="名称" prop="profile.name"></el-table-column>
+      <el-table-column label="会员码" prop="code"/>
+      <el-table-column label="名称" prop="name"></el-table-column>
       <el-table-column label="手机号码">
         <template #default="{row}">
-          {{ row.profile.mobileNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1****$3") }}
+          {{ row.phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1****$3") }}
         </template>
       </el-table-column>
       <el-table-column label="余额">
@@ -82,7 +82,7 @@ onMounted(() => {
         <template #default="{row}">
           <el-button
               type="primary"
-              @click="router.push('/shop-accounts/detail?name='+encodeURI(row.profile.name))"
+              @click="router.push(`/shop-accounts/detail?shop=${row.shop}&code=${encodeURI(row.code)}`)"
           >
             查看
           </el-button>

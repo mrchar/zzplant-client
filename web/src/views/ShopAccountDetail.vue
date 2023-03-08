@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import {onBeforeMount, ref} from "vue"
-import {Account} from "../types/account"
 import {useRoute, useRouter} from "vue-router"
 import {Search} from "@element-plus/icons-vue"
 import {Bill} from "../types/bill"
 import api from "../api"
 import {Transaction} from "../types/transaction"
 import {ElMessage} from "element-plus"
+import {ShopAccount} from "../types"
 
 const shopId = "0"
 const nameSuffix = new Map([["male", "先生"], ["female", "女士"]])
@@ -16,25 +16,23 @@ const router = useRouter()
 
 const keyword = ref("")
 
-const accountName = ref<string>("")
-const account = ref<Account>({
-  id: "",
-  password: "",
-  profile: {
-    id: "",
-    name: "",
-    gender: "",
-    mobileNumber: "",
-  },
+const shopCode = ref<string>("")
+const shopAccountCode = ref<string>("")
+const shopAccount = ref<ShopAccount>({
+  code: "",
+  name: "",
+  gender: "",
+  phoneNumber: "",
+  shop: "",
   balance: 0,
 })
 
-const getAccount = () => {
-  api.getAccount({name: accountName.value})
+const getShopAccount = () => {
+  api.shop.getShopAccount(shopCode.value, shopAccountCode.value)
       .then((res) => {
         if (res) {
-          account.value = res
-          listAllBills()
+          shopAccount.value = res
+          // listAllBills()
         }
       })
 }
@@ -47,7 +45,7 @@ const bills = ref<Array<BillWithTransaction>>([])
 
 const listAllBills = () => {
   api.listAllBills({
-    accountId: account.value.id,
+    accountId: shopAccount.value.id,
     page: pagination.value.currentPage,
     size: pagination.value.pageSize,
   })
@@ -76,9 +74,9 @@ const pagination = ref({
 const showAddCreditsDialog = ref(false)
 const balanceToAdd = ref(0)
 const addCredits = () => {
-  api.transfer({from: shopId, to: account.value.id, balance: balanceToAdd.value})
+  api.transfer({from: shopId, to: shopAccount.value.id, balance: balanceToAdd.value})
       .then(() => {
-        getAccount()
+        getShopAccount()
       })
       .catch(error => {
         ElMessage({message: error.message, type: "error"})
@@ -92,9 +90,9 @@ const addCredits = () => {
 const showConsumeDialog = ref(false)
 const balanceToPay = ref(0)
 const consume = () => {
-  api.transfer({from: account.value.id, to: shopId, balance: balanceToPay.value})
+  api.transfer({from: shopAccount.value.id, to: shopId, balance: balanceToPay.value})
       .then(() => {
-        getAccount()
+        getShopAccount()
       })
       .catch(error => {
         ElMessage({message: error.message, type: "error"})
@@ -106,11 +104,18 @@ const consume = () => {
 }
 
 onBeforeMount(() => {
-  const name = route.query.name as string
-  if (name) {
-    accountName.value = name
-    getAccount()
+  const shop = route.query.shop as string
+  const code = route.query.code as string
+
+  if (!shop || !code) {
+    ElMessage.error("缺少会员参数")
+    router.push("/shop-accounts")
+    return
   }
+
+  shopCode.value = shop
+  shopAccountCode.value = code
+  getShopAccount()
 })
 
 </script>
@@ -119,18 +124,18 @@ onBeforeMount(() => {
   <div class="w-full h-full box-border p-6 flex flex-col gap-6">
     <el-button class="max-w-fit" @click="router.push('/shop-accounts')">返回</el-button>
     <div class="w-full">
-      <el-descriptions size="large">
+      <el-descriptions :column="1">
         <template #title>
           <div class="font-bold">会员信息</div>
         </template>
         <el-descriptions-item label="称呼">
-          {{ account.profile.name + (" " + nameSuffix.get(account.profile.gender) || "") }}
+          {{ shopAccount.name + (" " + nameSuffix.get(shopAccount.gender.toLowerCase()) || "") }}
         </el-descriptions-item>
         <el-descriptions-item label="手机号码">
-          {{ account.profile.mobileNumber }}
+          {{ shopAccount.phoneNumber }}
         </el-descriptions-item>
         <el-descriptions-item label="账户余额">
-          {{ "￥" + account.balance }}
+          {{ "￥" + shopAccount.balance }}
         </el-descriptions-item>
         <template #extra>
           <el-button size="large" type="success" @click="showAddCreditsDialog=true">充值</el-button>
