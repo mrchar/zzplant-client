@@ -1,6 +1,4 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router"
-import AddAccount from "../views/AddAccount.vue"
-import AccountDetail from "../views/AccountDetail.vue"
 import {useAuth} from "../store/auth"
 import api from "../api"
 import Crossroad from "../views/Crossroad.vue"
@@ -13,8 +11,12 @@ const routes: RouteRecordRaw[] = [
     {name: "AddShop", path: "/shops/add", component: () => import("../views/AddShop.vue")},
     {name: "SelectShop", path: "/shops/select", component: () => import("../views/SelectShop.vue")},
     {name: "ShopAccounts", path: "/shop-accounts", component: () => import("../views/ShopAccounts.vue")},
-    {name: "AddShopAccounts", path: "/shop-accounts/add", component: AddAccount},
-    {name: "ShopAccountDetail", path: "/shop-accounts/detail", component: AccountDetail},
+    {name: "AddShopAccounts", path: "/shop-accounts/add", component: () => import("../views/AddShopAccount.vue")},
+    {
+        name: "ShopAccountDetail",
+        path: "/shop-accounts/detail",
+        component: () => import("../views/ShopAccountDetail.vue"),
+    },
 ]
 
 export const router = createRouter({

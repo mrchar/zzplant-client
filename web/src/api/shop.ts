@@ -19,11 +19,23 @@ export async function listShopAccounts(shopCode: string): Promise<PagedResponse<
     return await axios.get(`/shops/${shopCode}/accounts`)
 }
 
+export interface AddShopAccountParams {
+    name: string
+    gender: string
+    phoneNumber: string
+    balance: number
+}
+
+export async function addShopAccount(shopCode: string, params: AddShopAccountParams): Promise<ShopAccount> {
+    return await axios.post(`/shops/${shopCode}/accounts`, params)
+}
+
 
 export const shop = {
     listShops,
     addShop,
     listShopAccounts,
+    addShopAccount,
 }
 
 export default shop

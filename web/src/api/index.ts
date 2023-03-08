@@ -71,45 +71,6 @@ export const getAccount = async (params: GetAccountParams): Promise<Account | vo
     }
 }
 
-export interface AddAccountParams {
-    name: string,
-    gender: string,
-    mobileNumber: string,
-    initBalance: number
-}
-
-export const addAccount = async (params: AddAccountParams): Promise<Account> => {
-    const allAccounts = await loadAllAccounts()
-
-    const id = allAccounts.length.toString()
-    const balance = Number(params.initBalance)
-
-    const account = {
-        id: id,
-        password: "",
-        profile: {
-            id: id,
-            name: params.name,
-            gender: params.gender,
-            mobileNumber: params.mobileNumber,
-        },
-        balance: 0,
-    }
-    allAccounts.push(account)
-    await saveAllAccounts(allAccounts)
-
-    if (balance > 0) {
-        const shop = allAccounts[0]
-        await transfer({
-            from: shop.id,
-            to: account.id,
-            balance: balance,
-        })
-    }
-
-    return account
-}
-
 const loadAllBills = async (): Promise<Array<Bill>> => {
     const billsString = window.localStorage.getItem("bills")
     if (!billsString) {
@@ -311,7 +272,6 @@ export default {
     auth,
     shop,
     getAccount,
-    addAccount,
     listAllBills,
     listAllTransactions,
     getTransaction,
