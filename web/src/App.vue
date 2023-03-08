@@ -7,6 +7,18 @@ import {en, zhCn} from "element-plus/es/locale/index"
 import {ElMessage} from "element-plus"
 import I18n from "./components/I18n.vue"
 import "element-plus/theme-chalk/dark/css-vars.css"
+import {useShop} from "./store/shop"
+import {useRouter} from "vue-router"
+
+const store = useShop()
+const shop = computed(() => {
+  if (store.selected) {
+    return store.selected
+  }
+  return null
+})
+
+const router = useRouter()
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
@@ -23,9 +35,12 @@ const locale = computed(() => {
   <el-config-provider :locale="locale">
     <div class="w-screen h-screen overflow-hidden flex flex-col gap-2">
       <div class="box-border p-4 w-full flex justify-between">
-        <div>
-          Logo
+        <div v-if="shop">
+          {{ shop.name }}
         </div>
+        <el-button v-else link @click="router.push('/shops/select')">
+          选择商铺
+        </el-button>
         <div class="flex gap-4">
           <el-icon class="text-2xl text-zinc-800" @click="toggleDark()">
             <Moon v-show="isDark"/>
