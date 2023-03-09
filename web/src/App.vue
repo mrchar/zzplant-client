@@ -80,7 +80,7 @@ const locale = computed(() => {
           </el-dropdown>
         </div>
       </div>
-      <div class="flex-1 w-full h-96 max-w-7xl mx-auto">
+      <div class="flex-1 w-full h-8 max-w-7xl mx-auto">
         <router-view/>
       </div>
     </div>

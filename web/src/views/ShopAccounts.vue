@@ -80,7 +80,7 @@ onMounted(() => {
         description="点击按钮添加会员"
     />
     <!--List-->
-    <div class="w-full h-full overflow-y-auto">
+    <div class="flex-1 overflow-y-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-start">
         <el-card v-for="account in accounts" :key="account.code">
           <el-descriptions :title="account.name" :extra="account.code" :column="2">
@@ -107,7 +107,7 @@ onMounted(() => {
         v-model:page-size="pagination.pageSize"
         v-model:current-page="pagination.currentPage"
         :total="pagination.totalElements"
-        layout="sizes, prev, pager, next, jumper, ->, total"
+        layout="prev, pager, next, jumper, ->, total"
         @size-change="listShopAccounts()"
         @current-change="listShopAccounts()">
     </el-pagination>
