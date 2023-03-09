@@ -19,8 +19,8 @@ export async function getShopAccount(shopCode: string, accountCode: string): Pro
     return await axios.get(`/shops/${shopCode}/accounts/${accountCode}`)
 }
 
-export async function listShopAccounts(shopCode: string): Promise<PagedResponse<ShopAccount>> {
-    return await axios.get(`/shops/${shopCode}/accounts`)
+export async function listShopAccounts(shopCode: string, keyword: string): Promise<PagedResponse<ShopAccount>> {
+    return await axios.get(`/shops/${shopCode}/accounts`, {params: {keyword: keyword}})
 }
 
 export interface AddShopAccountParams {

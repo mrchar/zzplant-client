@@ -217,6 +217,7 @@ export const transfer = async (params: TransferParams) => {
     await saveAllBills(allBills)
 }
 
+export type {Pageable} from "./base"
 export type {AddShopParams} from "./shop"
 
 export default {

@@ -13,6 +13,13 @@ const router = useRouter()
 
 const keyword = ref("")
 
+const shopCode = computed((): string => {
+  if (store.selected) {
+    return store.selected.code
+  }
+  return ""
+})
+
 const accounts = ref<Array<ShopAccount>>([])
 
 const hasAccounts = computed(() => {
@@ -25,8 +32,8 @@ const pagination = ref({
   totalElements: 0,
 })
 
-const listShopAccounts = (shopCode: string) => {
-  api.shop.listShopAccounts(shopCode)
+const listShopAccounts = () => {
+  api.shop.listShopAccounts(shopCode.value, keyword.value)
       .then(res => {
         accounts.value = res.content
         pagination.value.totalElements = res.totalElements
@@ -47,7 +54,7 @@ onMounted(() => {
     return
   }
 
-  listShopAccounts(store.selected.code)
+  listShopAccounts()
 })
 </script>
 
@@ -60,10 +67,10 @@ onMounted(() => {
           placeholder="输入名称或手机号码进行搜索"
           size="large"
           class="max-w-lg"
-          @keyup.enter="listShopAccounts"
+          @keyup.enter="listShopAccounts()"
       >
         <template #append>
-          <el-button @click="listShopAccounts" :icon="Search"/>
+          <el-button @click="listShopAccounts()" :icon="Search"/>
         </template>
       </el-input>
       <el-button type="primary" size="large" @click="router.push('/shop-accounts/add')">添加</el-button>
@@ -101,8 +108,8 @@ onMounted(() => {
         v-model:current-page="pagination.currentPage"
         :total="pagination.totalElements"
         layout="sizes, prev, pager, next, jumper, ->, total"
-        @size-change="listShopAccounts"
-        @current-change="listShopAccounts">
+        @size-change="listShopAccounts()"
+        @current-change="listShopAccounts()">
     </el-pagination>
   </div>
 </template>

@@ -9,3 +9,8 @@ export interface PagedResponse<T> {
     totalElements: number,
     totalPages: number
 }
+
+export interface Pageable {
+    page: number,
+    size: number
+}
