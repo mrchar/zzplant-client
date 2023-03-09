@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {onMounted, ref} from "vue"
+import {computed, onMounted, ref} from "vue"
 import {Search} from "@element-plus/icons-vue"
 import {useRouter} from "vue-router"
 import api, {ApiError} from "../api"
@@ -14,6 +14,10 @@ const router = useRouter()
 const keyword = ref("")
 
 const accounts = ref<Array<ShopAccount>>([])
+
+const hasAccounts = computed(() => {
+  return accounts.value != null && accounts.value.length !== 0
+})
 
 const pagination = ref({
   pageSize: 10,
@@ -64,6 +68,10 @@ onMounted(() => {
       </el-input>
       <el-button type="primary" size="large" @click="router.push('/shop-accounts/add')">添加</el-button>
     </div>
+    <el-empty
+        v-if="!hasAccounts"
+        description="点击按钮添加会员"
+    />
     <!--List-->
     <div class="w-full h-full overflow-y-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-start">

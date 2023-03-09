@@ -5,7 +5,7 @@ import {Transaction} from "../types/transaction"
 import auth from "./auth"
 import shop from "./shop"
 
-axios.defaults.baseURL = "http://127.0.0.1:8080/api/"
+axios.defaults.baseURL = "http://localhost:8080/api/"
 axios.defaults.withCredentials = true
 axios.defaults.xsrfCookieName = "XSRF-TOKEN"
 axios.defaults.xsrfHeaderName = "X-XSRF-TOKEN"
