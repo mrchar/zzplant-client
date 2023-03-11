@@ -43,7 +43,7 @@ const addAccount = () => {
 onMounted(() => {
   if (!store.selected) {
     ElMessage.error("请先选择店铺！")
-    router.push("/shops/selected")
+    router.push("/shops")
   }
 })
 </script>

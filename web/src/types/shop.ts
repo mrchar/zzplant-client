@@ -14,3 +14,9 @@ export interface ShopAccount {
     balance: number
     shop: string
 }
+
+export interface Commodity {
+    code: string
+    name: string
+    price: string
+}

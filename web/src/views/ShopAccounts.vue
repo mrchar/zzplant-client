@@ -50,7 +50,7 @@ const listShopAccounts = () => {
 
 onMounted(() => {
   if (!store.selected) {
-    router.push("/shops/select")
+    router.push("/shops")
     return
   }
 
@@ -59,7 +59,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full box-border p-4 flex flex-col justify-start gap-4">
+  <div class="w-full h-full flex flex-col justify-start gap-4">
     <!--Header-->
     <div class="flex gap-4 justify-between">
       <el-input

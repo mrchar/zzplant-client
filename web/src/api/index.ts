@@ -218,7 +218,7 @@ export const transfer = async (params: TransferParams) => {
 }
 
 export type {Pageable} from "./base"
-export type {AddShopParams} from "./shop"
+export type {AddShopParams, AddCommodityParams} from "./shop"
 
 export default {
     auth,

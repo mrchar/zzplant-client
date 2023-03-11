@@ -28,7 +28,7 @@ onMounted(() => {
         // 如果没有选择商铺，跳转到商铺选择页面
         const selected = store.selected
         if (selected == null) {
-          router.push("/shops/select")
+          router.push("/shops")
           return
         }
 

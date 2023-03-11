@@ -35,24 +35,26 @@ const onSelectShop = (shop: Shop) => {
 </script>
 
 <template>
-  <div class="px-8 py-16 flex flex-col gap-4 overflow-y-auto">
-    <el-card
-        v-for="shop in shops"
-        :key="shop.code"
-        @click="onSelectShop(shop)"
-    >
-      <el-descriptions :column="1">
-        <el-descriptions-item label="名称:">
-          {{ shop.name }}
-        </el-descriptions-item>
-        <el-descriptions-item label="地址:">
-          {{ shop.address }}
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-card>
-    <el-card class="mt-4" size="large" @click="router.push('/shops/add')">
+  <div class="w-full h-full flex flex-col gap-4">
+    <div class="flex-1 flex flex-col gap-4 overflow-y-auto">
+      <el-card
+          v-for="shop in shops"
+          :key="shop.code"
+          @click="onSelectShop(shop)"
+      >
+        <el-descriptions :column="1">
+          <el-descriptions-item label="名称:">
+            {{ shop.name }}
+          </el-descriptions-item>
+          <el-descriptions-item label="地址:">
+            {{ shop.address }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </el-card>
+    </div>
+    <el-button size="large" type="primary" @click="router.push('/shops/add')">
       添加
-    </el-card>
+    </el-button>
   </div>
 </template>
 
