@@ -2,7 +2,7 @@
 import {computed, onMounted, ref} from "vue"
 import {Search} from "@element-plus/icons-vue"
 import {useRouter} from "vue-router"
-import api, {ApiError} from "../api"
+import api from "../api"
 import {ElMessage} from "element-plus"
 import {useShop} from "../store/shop"
 import {ShopAccount} from "../types"

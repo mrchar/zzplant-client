@@ -1,22 +1,28 @@
 <script lang="ts" setup>
-import {onBeforeMount, ref} from "vue"
+import {computed, onBeforeMount, ref} from "vue"
 import {useRoute, useRouter} from "vue-router"
 import {Search} from "@element-plus/icons-vue"
-import {Bill} from "../types/bill"
 import api from "../api"
-import {Transaction} from "../types/transaction"
 import {ElMessage} from "element-plus"
-import {ShopAccount} from "../types"
+import {Invoice, Shop, ShopAccount} from "../types"
+import ZzTitle from "../components/ZzTitle.vue"
+import {useShop} from "../store/shop"
 
-const shopId = "0"
 const nameSuffix = new Map([["male", "先生"], ["female", "女士"]])
+
+const store = useShop()
+const shop = computed((): Shop => {
+  if (store.selected) {
+    return store.selected
+  }
+  return {address: "", code: "", company: "", name: "", owner: ""}
+})
 
 const route = useRoute()
 const router = useRouter()
 
 const keyword = ref("")
 
-const shopCode = ref<string>("")
 const shopAccountCode = ref<string>("")
 const shopAccount = ref<ShopAccount>({
   code: "",
@@ -28,106 +34,74 @@ const shopAccount = ref<ShopAccount>({
 })
 
 const getShopAccount = () => {
-  api.shop.getShopAccount(shopCode.value, shopAccountCode.value)
+  api.shop.getShopAccount(shop.value.code, shopAccountCode.value)
       .then((res) => {
         if (res) {
           shopAccount.value = res
-          // listAllBills()
         }
       })
 }
 
-interface BillWithTransaction extends Bill {
-  transaction: Transaction,
-}
+const invoices = ref<Invoice[]>([])
 
-const bills = ref<Array<BillWithTransaction>>([])
+const hasInvoices = computed((): boolean => {
+  if (invoices && invoices.value.length > 0) {
+    return true
+  }
+  return false
+})
 
-const listAllBills = () => {
-  api.listAllBills({
-    accountId: shopAccount.value.id,
-    page: pagination.value.currentPage,
-    size: pagination.value.pageSize,
-  })
-      .then(res => {
-        bills.value = res.content.map(item => item as BillWithTransaction)
-        pagination.value.totalElements = res.total
-
-        bills.value.forEach(item => {
-          item.datetime = new Date(item.datetime)
-          api.getTransaction({id: item.transactionId})
-              .then((res) => {
-                if (res) {
-                  item.transaction = res
-                }
-              })
-        })
+const listInvoices = () => {
+  api.shop.listInvoices(shop.value.code, shopAccountCode.value)
+      .then((res) => {
+        invoices.value = res.content
+        pagination.value.totalElements = res.totalElements
+      })
+      .catch((err) => {
+        console.error("获取交易记录失败", err)
+        ElMessage.error("获取交易记录失败")
       })
 }
 
 const pagination = ref({
   pageSize: 10,
   currentPage: 1,
-  totalElements: 100,
+  totalElements: 0,
 })
 
 const showAddCreditsDialog = ref(false)
 const balanceToAdd = ref(0)
-const addCredits = () => {
-  api.transfer({from: shopId, to: shopAccount.value.id, balance: balanceToAdd.value})
-      .then(() => {
-        getShopAccount()
-      })
-      .catch(error => {
-        ElMessage({message: error.message, type: "error"})
-      })
-      .finally(() => {
-        balanceToAdd.value = 0
-        showAddCreditsDialog.value = false
-      })
-}
+
 
 const showConsumeDialog = ref(false)
 const balanceToPay = ref(0)
-const consume = () => {
-  api.transfer({from: shopAccount.value.id, to: shopId, balance: balanceToPay.value})
-      .then(() => {
-        getShopAccount()
-      })
-      .catch(error => {
-        ElMessage({message: error.message, type: "error"})
-      })
-      .finally(() => {
-        balanceToPay.value = 0
-        showConsumeDialog.value = false
-      })
-}
 
 onBeforeMount(() => {
-  const shop = route.query.shop as string
   const code = route.query.code as string
 
-  if (!shop || !code) {
+  if (!code) {
     ElMessage.error("缺少会员参数")
     router.push("/shop-accounts")
     return
   }
 
-  shopCode.value = shop
   shopAccountCode.value = code
   getShopAccount()
+  listInvoices()
 })
 
 </script>
 
 <template>
-  <div class="w-full h-full box-border p-6 flex flex-col gap-6">
-    <el-button class="max-w-fit" @click="router.push('/shop-accounts')">返回</el-button>
+  <div class="w-full h-full flex flex-col gap-2">
     <div class="w-full">
-      <el-descriptions :column="1">
-        <template #title>
-          <div class="font-bold">会员信息</div>
+      <zz-title title="会员信息">
+        <template #extra>
+          <el-button type="success" @click="showAddCreditsDialog=true">充值</el-button>
+          <el-button type="primary" @click="showConsumeDialog=true">消费</el-button>
         </template>
+      </zz-title>
+      <el-descriptions :column="1">
         <el-descriptions-item label="称呼">
           {{ shopAccount.name + (" " + nameSuffix.get(shopAccount.gender.toLowerCase()) || "") }}
         </el-descriptions-item>
@@ -137,13 +111,9 @@ onBeforeMount(() => {
         <el-descriptions-item label="账户余额">
           {{ "￥" + shopAccount.balance }}
         </el-descriptions-item>
-        <template #extra>
-          <el-button size="large" type="success" @click="showAddCreditsDialog=true">充值</el-button>
-          <el-button size="large" type="primary" @click="showConsumeDialog=true">消费</el-button>
-        </template>
       </el-descriptions>
     </div>
-    <div class="font-bold">账单记录</div>
+    <zz-title title="账单记录"/>
     <el-input
         v-model="keyword"
         placeholder="输入消费日期或订单号搜索"
@@ -155,35 +125,37 @@ onBeforeMount(() => {
         <el-button :icon="Search" @click="ElMessage('正在开发中...')"/>
       </template>
     </el-input>
-    <el-table :data="bills" border stripe>
-      <el-table-column label="时间">
-        <template #default="{row}">
-          {{ row.datetime.toLocaleString() }}
-        </template>
-      </el-table-column>
-      <el-table-column label="订单号" prop="transaction.number">
-      </el-table-column>
-      <el-table-column label="类型">
-        <template #default="{row}">
-          {{ row.amount > 0 ? "充值" : "消费" }}
-        </template>
-      </el-table-column>
-      <el-table-column label="金额(￥)" prop="amount">
-      </el-table-column>
-      <el-table-column label="余额(￥)" prop="currentBalance"></el-table-column>
-    </el-table>
+    <el-empty v-if="!hasInvoices" description="还没有任何交易"></el-empty>
+    <div class="flex-1 overflow-y-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-start">
+        <el-card v-for="invoice in invoices">
+          <el-descriptions :title="invoice.code" :extra="invoice.datetime">
+            <el-descriptions-item label="类型">
+              {{ invoice.amount > 0 ? "充值" : "消费" }}
+            </el-descriptions-item>
+            <el-descriptions-item label="金额(￥)">
+              {{ invoice.amount }}
+            </el-descriptions-item>
+            <el-descriptions-item label="余额(￥)">
+              {{ invoice.currentBalance }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-card>
+      </div>
+    </div>
     <el-pagination
         background
         v-model:page-size="pagination.pageSize"
         v-model:current-page="pagination.currentPage"
         :total="pagination.totalElements"
-        layout="sizes, prev, pager, next, jumper, ->, total"
-        @current-change="listAllBills"
-        @size-change="listAllBills"
+        layout="prev, pager, next, jumper, ->, total"
+        @current-change="listInvoices"
+        @size-change="listInvoices"
     >
     </el-pagination>
-    <el-dialog v-model="showAddCreditsDialog">
-      <el-form label-width="60">
+    <el-dialog v-model="showAddCreditsDialog" fullscreen>
+      <zz-title title="充值"/>
+      <el-form label-width="60" label-position="top">
         <el-form-item label="金额">
           <el-input v-model="balanceToAdd"></el-input>
         </el-form-item>
@@ -193,8 +165,9 @@ onBeforeMount(() => {
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-dialog v-model="showConsumeDialog">
-      <el-form label-width="60">
+    <el-dialog v-model="showConsumeDialog" fullscreen>
+      <zz-title title="消费"/>
+      <el-form label-position="top">
         <el-form-item label="金额">
           <el-input v-model="balanceToPay"></el-input>
         </el-form-item>

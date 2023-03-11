@@ -27,10 +27,10 @@ const router = useRouter()
 
 <template>
   <div class="p-4 flex justify-between">
-    <div v-if="shop">
+    <div v-if="shop" @click="router.push('/shop-accounts')">
       {{ shop.name }}
     </div>
-    <div v-else>
+    <div v-else @click="router.push('/shops')">
       未选择
     </div>
     <div class="flex gap-4">

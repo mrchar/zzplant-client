@@ -80,7 +80,7 @@ onMounted(() => {
       </el-input>
       <el-button type="primary" size="large" @click="router.push('/commodities/add')">添加</el-button>
     </div>
-    <div class="flex-1 flex flex-col gap-2 overflow-y-auto">
+    <div class="flex-1 overflow-y-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-start">
         <el-card v-for="commodity in commodities">
           <el-descriptions

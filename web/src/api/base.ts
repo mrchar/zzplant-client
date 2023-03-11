@@ -14,3 +14,6 @@ export interface Pageable {
     page: number,
     size: number
 }
+
+export class ApiError extends Error {
+}

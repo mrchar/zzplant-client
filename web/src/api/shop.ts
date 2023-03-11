@@ -1,5 +1,5 @@
 import axios from "axios"
-import {Commodity, Shop, ShopAccount} from "../types"
+import {Commodity, Invoice, Shop, ShopAccount} from "../types"
 import {PagedResponse} from "./base"
 
 export async function listShops(): Promise<PagedResponse<Shop>> {
@@ -47,6 +47,10 @@ export async function addCommodity(shopCode: string, params: AddCommodityParams)
     return await axios.post(`/shops/${shopCode}/commodities`, params)
 }
 
+export async function listInvoices(shopCode: string, accountCode: string): Promise<PagedResponse<Invoice>> {
+    return await axios.get(`/shops/${shopCode}/accounts/${accountCode}/invoices`)
+}
+
 export const shop = {
     listShops,
     addShop,
@@ -55,6 +59,7 @@ export const shop = {
     addShopAccount,
     listCommodities,
     addCommodity,
+    listInvoices,
 }
 
 export default shop
