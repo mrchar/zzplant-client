@@ -6,6 +6,7 @@ import api from "../api"
 import {ElMessage} from "element-plus"
 import {useShop} from "../store/shop"
 import {ShopAccount} from "../types"
+import ZzTitle from "../components/ZzTitle.vue"
 
 const store = useShop()
 
@@ -61,6 +62,7 @@ onMounted(() => {
 <template>
   <div class="w-full h-full flex flex-col justify-start gap-4">
     <!--Header-->
+    <zz-title title="会员列表"/>
     <div class="flex gap-4 justify-between">
       <el-input
           v-model="keyword"

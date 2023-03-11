@@ -13,7 +13,7 @@ const {locale} = storeToRefs(store)
 <template>
   <el-config-provider :locale="locale">
     <div class="full-screen flex flex-col gap-2">
-      <zz-header/>
+      <zz-header class="max-w-7xl w-full mx-auto"/>
       <main class="content-container">
         <router-view/>
       </main>
@@ -23,10 +23,10 @@ const {locale} = storeToRefs(store)
 
 <style scoped>
 .full-screen {
-  @apply w-screen h-screen overflow-hidden;
+  @apply w-screen h-screen p-2 overflow-hidden;
 }
 
 .content-container {
-  @apply flex-1 max-w-7xl w-full h-full mx-auto p-4 overflow-hidden;
+  @apply flex-1 max-w-7xl w-full h-full mx-auto p-2 overflow-hidden;
 }
 </style>

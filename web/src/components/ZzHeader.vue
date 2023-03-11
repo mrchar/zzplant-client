@@ -34,7 +34,7 @@ const isHomePage = computed(() => {
 </script>
 
 <template>
-  <div class="p-4 flex justify-between">
+  <div class="px-2 py-4 flex justify-between">
     <div class="flex gap-2">
       <el-icon v-if="!isHomePage" @click="router.go(-1)">
         <ArrowLeft/>

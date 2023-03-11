@@ -49,7 +49,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full box-border p-6 pr-12">
+  <div class="max-w-lg w-full h-full mx-auto box-border p-6 pr-12">
     <div class="text-xl my-4">添加会员</div>
     <el-form class="max-w-lg mx-auto" label-position="top" label-suffix=":">
       <el-form-item label="称呼">

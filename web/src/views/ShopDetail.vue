@@ -5,6 +5,7 @@ import {Commodity, Shop} from "../types"
 import {useRouter} from "vue-router"
 import {Search} from "@element-plus/icons-vue"
 import api from "../api"
+import {ElMessage} from "element-plus"
 
 const store = useShop()
 
@@ -53,7 +54,7 @@ onMounted(() => {
         <div class="text-lg my-1">商铺详情</div>
       </template>
       <template #extra>
-        <el-button link>编辑</el-button>
+        <el-button link @click="ElMessage.info('正在开发中...')">编辑</el-button>
       </template>
       <el-descriptions-item label="编号:">
         {{ shop.code }}
@@ -98,6 +99,10 @@ onMounted(() => {
               {{ '￥' + commodity.price }}
             </el-descriptions-item>
           </el-descriptions>
+          <div>
+            <el-button type="primary" @click="ElMessage.info('正在开发中...')">开单</el-button>
+            <el-button @click="ElMessage.info('正在开发中...')">编辑</el-button>
+          </div>
         </el-card>
       </div>
     </div>

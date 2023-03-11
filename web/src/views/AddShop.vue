@@ -28,12 +28,12 @@ const addAccount = () => {
 </script>
 
 <template>
-  <div class="w-full h-full box-border p-6 pr-12 flex flex-col gap-6">
-    <div class="max-w-lg mx-auto font-bold">请创建店铺</div>
-    <div class="max-w-lg pl-8 pr-4 mx-auto text-center">
+  <div class="max-w-lg w-full h-full mx-auto flex flex-col gap-6">
+    <div class="font-bold">请创建店铺</div>
+    <div>
       在开始一切之前，您必须先创建店铺，随后不断为您的店铺添加会员。
     </div>
-    <el-form class="max-w-lg mx-auto" label-width="100px">
+    <el-form label-width="100px" label-position="top">
       <el-form-item label="店铺名称">
         <el-input v-model="addForm.name" placeholder="请输入店铺的名字"/>
       </el-form-item>

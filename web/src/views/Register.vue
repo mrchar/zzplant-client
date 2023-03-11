@@ -2,6 +2,7 @@
 import {ref} from "vue"
 import api from "../api"
 import {useRouter} from "vue-router"
+import ZzTitle from "../components/ZzTitle.vue"
 
 const router = useRouter()
 
@@ -18,8 +19,8 @@ const showDialog = ref(false)
 </script>
 
 <template>
-  <div class="px-8">
-    <div class="text-xl my-4">注册</div>
+  <div class="max-w-lg mx-auto">
+    <zz-title title="注册"/>
     <el-form label-position="top">
       <el-form-item label="手机号码">
         <el-input v-model="formData.phoneNumber"/>
@@ -45,17 +46,18 @@ const showDialog = ref(false)
       </el-form-item>
     </el-form>
   </div>
-  <div v-show="showDialog" class="absolute inset-0 p-4 backdrop-blur-3xl">
-    <el-card class="absolute bottom-80 inset-x-4" header="注册成功">
-      <div class="flex flex-col gap-8">
-        <div>🎉注册成功，现在就去登录！</div>
-        <el-button class="w-full"
-                   type="primary"
-                   @click="router.push('/login')"
-        >
-          👌好的
-        </el-button>
-      </div>
-    </el-card>
-  </div>
+  <el-drawer
+      v-model="showDialog"
+      direction="btt"
+      :close-on-click-modal="false"
+      :show-close="false"
+      title="注册成功"
+  >
+    <div>🎉注册成功，现在就去登录！</div>
+    <template #footer>
+      <el-button class="w-full" type="primary" @click="router.push('/login')">
+        👌好的
+      </el-button>
+    </template>
+  </el-drawer>
 </template>

@@ -153,30 +153,30 @@ onBeforeMount(() => {
         @size-change="listInvoices"
     >
     </el-pagination>
-    <el-dialog v-model="showAddCreditsDialog" fullscreen>
+    <el-drawer v-model="showAddCreditsDialog" direction="btt" size="50%">
       <zz-title title="充值"/>
       <el-form label-width="60" label-position="top">
         <el-form-item label="金额">
           <el-input v-model="balanceToAdd"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="addCredits">充值</el-button>
-          <el-button @click="showAddCreditsDialog=false">取消</el-button>
-        </el-form-item>
       </el-form>
-    </el-dialog>
-    <el-dialog v-model="showConsumeDialog" fullscreen>
+      <template #footer>
+        <el-button type="primary" @click="addCredits">充值</el-button>
+        <el-button @click="showAddCreditsDialog=false">取消</el-button>
+      </template>
+    </el-drawer>
+    <el-drawer v-model="showConsumeDialog" direction="btt" size="50%">
       <zz-title title="消费"/>
       <el-form label-position="top">
         <el-form-item label="金额">
           <el-input v-model="balanceToPay"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="consume">支付</el-button>
-          <el-button @click="showConsumeDialog=false">取消</el-button>
-        </el-form-item>
       </el-form>
-    </el-dialog>
+      <template #footer>
+        <el-button type="primary" @click="consume">支付</el-button>
+        <el-button @click="showConsumeDialog=false">取消</el-button>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
