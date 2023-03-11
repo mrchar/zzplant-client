@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import {computed} from "vue"
 import {useDark, useToggle} from "@vueuse/core"
-import {useRouter} from "vue-router"
-import {Moon, Setting, Sunny} from "@element-plus/icons-vue"
+import {useRoute, useRouter} from "vue-router"
+import {ArrowLeft, Moon, Setting, Sunny} from "@element-plus/icons-vue"
 import I18n from "./I18n.vue"
 import {useShop} from "../store/shop"
 import {useLanguage} from "../store/language"
@@ -22,24 +22,37 @@ const shop = computed(() => {
 const languageStore = useLanguage()
 const {language} = storeToRefs(languageStore)
 
+const route = useRoute()
 const router = useRouter()
+
+const isHomePage = computed(() => {
+  if (route.path === "/shop-accounts") {
+    return true
+  }
+  return false
+})
 </script>
 
 <template>
   <div class="p-4 flex justify-between">
-    <div v-if="shop" @click="router.push('/shop-accounts')">
-      {{ shop.name }}
-    </div>
-    <div v-else @click="router.push('/shops')">
-      未选择
+    <div class="flex gap-2">
+      <el-icon v-if="!isHomePage" @click="router.go(-1)">
+        <ArrowLeft/>
+      </el-icon>
+      <div v-if="shop" class="header-title" @click="router.push('/shop-accounts')">
+        {{ shop.name }}
+      </div>
+      <div v-else class="header-title" @click="router.push('/shops')">
+        未选择
+      </div>
     </div>
     <div class="flex gap-4">
-      <el-icon size="1.25rem" @click="toggleDark()">
+      <el-icon @click="toggleDark()">
         <Moon v-show="isDark"/>
         <Sunny v-show="!isDark"/>
       </el-icon>
       <el-dropdown size="large">
-        <el-icon size="1.25rem">
+        <el-icon>
           <I18n/>
         </el-icon>
         <template #dropdown>
@@ -60,7 +73,7 @@ const router = useRouter()
         </template>
       </el-dropdown>
       <el-dropdown size="large">
-        <el-icon size="1.25rem">
+        <el-icon>
           <Setting/>
         </el-icon>
         <template #dropdown>
@@ -73,3 +86,13 @@ const router = useRouter()
     </div>
   </div>
 </template>
+
+<style scoped>
+:deep(.el-icon) {
+  @apply text-xl leading-4;
+}
+
+.header-title {
+  @apply text-xl leading-none;
+}
+</style>
