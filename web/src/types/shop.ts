@@ -14,3 +14,27 @@ export interface ShopAccount {
     balance: number
     shop: string
 }
+
+export interface Commodity {
+    code: string
+    name: string
+    price: string
+}
+
+export interface InvoiceCommodity {
+    code: string
+    name: string
+    price: number
+    quantity: number
+    amount: number
+}
+
+export interface Invoice {
+    code: string
+    datetime: Date
+    commodities: InvoiceCommodity[]
+    amount: number
+    currentBalance: number
+    shopAccount: string
+    shop: string
+}

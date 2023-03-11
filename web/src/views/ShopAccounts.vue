@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import {onMounted, ref} from "vue"
+import {computed, onMounted, ref} from "vue"
 import {Search} from "@element-plus/icons-vue"
 import {useRouter} from "vue-router"
-import api, {ApiError} from "../api"
+import api from "../api"
 import {ElMessage} from "element-plus"
 import {useShop} from "../store/shop"
 import {ShopAccount} from "../types"
@@ -13,7 +13,18 @@ const router = useRouter()
 
 const keyword = ref("")
 
+const shopCode = computed((): string => {
+  if (store.selected) {
+    return store.selected.code
+  }
+  return ""
+})
+
 const accounts = ref<Array<ShopAccount>>([])
+
+const hasAccounts = computed(() => {
+  return accounts.value != null && accounts.value.length !== 0
+})
 
 const pagination = ref({
   pageSize: 10,
@@ -21,8 +32,8 @@ const pagination = ref({
   totalElements: 0,
 })
 
-const listShopAccounts = (shopCode: string) => {
-  api.shop.listShopAccounts(shopCode)
+const listShopAccounts = () => {
+  api.shop.listShopAccounts(shopCode.value, keyword.value)
       .then(res => {
         accounts.value = res.content
         pagination.value.totalElements = res.totalElements
@@ -39,16 +50,16 @@ const listShopAccounts = (shopCode: string) => {
 
 onMounted(() => {
   if (!store.selected) {
-    router.push("/shops/select")
+    router.push("/shops")
     return
   }
 
-  listShopAccounts(store.selected.code)
+  listShopAccounts()
 })
 </script>
 
 <template>
-  <div class="w-full h-full box-border p-4 flex flex-col justify-start gap-4">
+  <div class="w-full h-full flex flex-col justify-start gap-4">
     <!--Header-->
     <div class="flex gap-4 justify-between">
       <el-input
@@ -56,16 +67,20 @@ onMounted(() => {
           placeholder="输入名称或手机号码进行搜索"
           size="large"
           class="max-w-lg"
-          @keyup.enter="listShopAccounts"
+          @keyup.enter="listShopAccounts()"
       >
         <template #append>
-          <el-button @click="listShopAccounts" :icon="Search"/>
+          <el-button @click="listShopAccounts()" :icon="Search"/>
         </template>
       </el-input>
       <el-button type="primary" size="large" @click="router.push('/shop-accounts/add')">添加</el-button>
     </div>
+    <el-empty
+        v-if="!hasAccounts"
+        description="点击按钮添加会员"
+    />
     <!--List-->
-    <div class="w-full h-full overflow-y-auto">
+    <div class="flex-1 overflow-y-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-start">
         <el-card v-for="account in accounts" :key="account.code">
           <el-descriptions :title="account.name" :extra="account.code" :column="2">
@@ -92,9 +107,9 @@ onMounted(() => {
         v-model:page-size="pagination.pageSize"
         v-model:current-page="pagination.currentPage"
         :total="pagination.totalElements"
-        layout="sizes, prev, pager, next, jumper, ->, total"
-        @size-change="listShopAccounts"
-        @current-change="listShopAccounts">
+        layout="prev, pager, next, jumper, ->, total"
+        @size-change="listShopAccounts()"
+        @current-change="listShopAccounts()">
     </el-pagination>
   </div>
 </template>
