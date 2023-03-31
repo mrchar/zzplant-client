@@ -69,9 +69,27 @@ const pagination = ref({
 const showTopUpDialog = ref(false)
 const balanceToAdd = ref(0)
 
+function topUp() {
+    api.shop.topUp(shop.value.code, shopAccount.value.code, balanceToAdd.value)
+        .then(res => {
+            ElMessage.success("充值成功！")
+            getShopAccount()
+        })
+        .catch(err => {
+            ElMessage.error("充值失败！")
+        })
+        .finally(() => {
+            showTopUpDialog.value = false
+        })
+}
+
 
 const showConsumeDialog = ref(false)
 const balanceToPay = ref(0)
+
+function consume() {
+
+}
 
 onBeforeMount(() => {
     const code = route.query.code as string
@@ -154,11 +172,15 @@ onBeforeMount(() => {
             <zz-title title="充值"/>
             <el-form label-width="60" label-position="top">
                 <el-form-item label="金额">
-                    <el-input v-model="balanceToAdd"></el-input>
+                    <el-input v-model="balanceToAdd">
+                        <template #prefix>
+                            ￥
+                        </template>
+                    </el-input>
                 </el-form-item>
             </el-form>
             <template #footer>
-                <el-button type="primary" @click="addCredits">充值</el-button>
+                <el-button type="primary" @click="topUp">充值</el-button>
                 <el-button @click="showTopUpDialog=false">取消</el-button>
             </template>
         </el-drawer>

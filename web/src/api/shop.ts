@@ -51,6 +51,10 @@ export async function listBills(shopCode: string, accountCode: string): Promise<
     return await axios.get(`/shops/${shopCode}/accounts/${accountCode}/bills`)
 }
 
+export async function topUp(shopCode: string, accountCode: string, amount: number) {
+    return await axios.post(`/shops/${shopCode}/accounts/${accountCode}/top-up`, {amount})
+}
+
 export const shop = {
     listShops,
     addShop,
@@ -60,6 +64,7 @@ export const shop = {
     listCommodities,
     addCommodity,
     listBills,
+    topUp,
 }
 
 export default shop
