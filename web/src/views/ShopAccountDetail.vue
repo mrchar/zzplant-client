@@ -112,8 +112,7 @@ onBeforeMount(() => {
         <div class="w-full">
             <zz-title title="会员信息">
                 <template #extra>
-                    <el-button type="success" @click="showTopUpDialog=true">充值</el-button>
-                    <el-button type="primary" @click="showConsumeDialog=true">消费</el-button>
+                    <el-button link @click="()=>{ElMessage.info('正在开发中...')}">编辑</el-button>
                 </template>
             </zz-title>
             <el-descriptions :column="1">
@@ -124,11 +123,18 @@ onBeforeMount(() => {
                     {{ shopAccount.phoneNumber }}
                 </el-descriptions-item>
                 <el-descriptions-item label="账户余额">
-                    {{ "￥" + shopAccount.balance }}
+                    <el-button link @click="()=>{ElMessage.info('正在开发中...')}">
+                        {{ "￥" + shopAccount.balance }}
+                    </el-button>
                 </el-descriptions-item>
             </el-descriptions>
         </div>
-        <zz-title title="账单记录"/>
+        <zz-title title="消费记录">
+            <template #extra>
+                <el-button type="success" @click="showTopUpDialog=true">充值</el-button>
+                <el-button type="primary" @click="showConsumeDialog=true">开单</el-button>
+            </template>
+        </zz-title>
         <el-input
                 v-model="keyword"
                 placeholder="输入消费日期或订单号搜索"
@@ -168,8 +174,10 @@ onBeforeMount(() => {
                 @size-change="listBills"
         >
         </el-pagination>
-        <el-drawer v-model="showTopUpDialog" direction="btt" size="50%">
-            <zz-title title="充值"/>
+        <el-drawer v-model="showTopUpDialog" direction="btt" size="40%">
+            <template #header>
+                <zz-title title="充值"/>
+            </template>
             <el-form label-width="60" label-position="top">
                 <el-form-item label="金额">
                     <el-input v-model="balanceToAdd">
@@ -184,11 +192,17 @@ onBeforeMount(() => {
                 <el-button @click="showTopUpDialog=false">取消</el-button>
             </template>
         </el-drawer>
-        <el-drawer v-model="showConsumeDialog" direction="btt" size="50%">
-            <zz-title title="消费"/>
+        <el-drawer v-model="showConsumeDialog" direction="btt" size="40%">
+            <template #header>
+                <zz-title title="开单"/>
+            </template>
             <el-form label-position="top">
                 <el-form-item label="金额">
-                    <el-input v-model="balanceToPay"></el-input>
+                    <el-input v-model="balanceToPay">
+                        <template #prefix>
+                            ￥
+                        </template>
+                    </el-input>
                 </el-form-item>
             </el-form>
             <template #footer>
