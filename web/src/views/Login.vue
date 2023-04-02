@@ -4,6 +4,7 @@ import api from "../api"
 import {useRouter} from "vue-router"
 import {useAuth} from "../store/auth"
 import {ElMessage} from "element-plus"
+import ZzTitle from "../components/ZzTitle.vue"
 
 const router = useRouter()
 
@@ -28,8 +29,8 @@ const login = () => {
 </script>
 
 <template>
-  <div class="px-8">
-    <div class="text-xl my-4">注册</div>
+  <div class="max-w-lg mx-auto">
+    <zz-title title="登录"/>
     <el-form label-position="top">
       <el-form-item label="手机号码">
         <el-input v-model="formData.phoneNumber"/>

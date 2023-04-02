@@ -11,6 +11,7 @@ const routes: RouteRecordRaw[] = [
     {name: "AddShop", path: "/shops/add", component: () => import("../views/AddShop.vue")},
     {name: "Shops", path: "/shops", component: () => import("../views/Shops.vue")},
     {name: "ShopDetail", path: "/shops/detail", component: () => import("../views/ShopDetail.vue")},
+    {name: "AddBill", path: "/bills/add", component: () => import("../views/AddBill.vue")},
     {name: "AddCommodity", path: "/commodities/add", component: () => import("../views/AddCommodity.vue")},
     {name: "ShopAccounts", path: "/shop-accounts", component: () => import("../views/ShopAccounts.vue")},
     {name: "AddShopAccounts", path: "/shop-accounts/add", component: () => import("../views/AddShopAccount.vue")},

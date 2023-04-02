@@ -1,5 +1,5 @@
 import {defineStore} from "pinia"
-import {ref} from "vue"
+import {computed, ref} from "vue"
 import {Shop} from "../types"
 
 export const useShop = defineStore("shop", () => {
@@ -22,6 +22,13 @@ export const useShop = defineStore("shop", () => {
 
     const selected = ref<Shop | null>()
 
+    const shop = computed<Shop>((): Shop => {
+        if (selected.value) {
+            return selected.value
+        }
+        return {address: "", code: "", company: "", name: "", owner: ""}
+    })
+
     const selectShop = (params: Shop | null) => {
         selected.value = params
         saveSelected()
@@ -33,6 +40,7 @@ export const useShop = defineStore("shop", () => {
         shops,
         setShops,
         selected,
+        shop,
         selectShop,
     }
 })

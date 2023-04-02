@@ -1,5 +1,5 @@
 import axios from "axios"
-import {Commodity, Invoice, Shop, ShopAccount} from "../types"
+import {Bill, BillCommodity, Commodity, Shop, ShopAccount} from "../types"
 import {PagedResponse} from "./base"
 
 export async function listShops(): Promise<PagedResponse<Shop>> {
@@ -47,8 +47,42 @@ export async function addCommodity(shopCode: string, params: AddCommodityParams)
     return await axios.post(`/shops/${shopCode}/commodities`, params)
 }
 
-export async function listInvoices(shopCode: string, accountCode: string): Promise<PagedResponse<Invoice>> {
-    return await axios.get(`/shops/${shopCode}/accounts/${accountCode}/invoices`)
+/**
+ * 获取商铺会员的所有订单
+ * @param shopCode
+ * @param accountCode
+ */
+export async function listBillsOfShopAccount(shopCode: string, accountCode: string): Promise<PagedResponse<Bill>> {
+    return await axios.get(`/shops/${shopCode}/accounts/${accountCode}/bills`)
+}
+
+/**
+ * 获取商铺中指定的订单
+ * @param shopCode
+ * @param billCode
+ */
+export async function getBill(shopCode: string, billCode: string): Promise<Bill> {
+    return await axios.get(`/shops/${shopCode}/bills/${billCode}`)
+}
+
+export async function topUp(shopCode: string, accountCode: string, amount: number): Promise<void> {
+    return await axios.post(`/shops/${shopCode}/accounts/${accountCode}/top-up`, {amount})
+}
+
+export async function addBill(shopCode: string, accountCode: string, commodities: BillCommodity[]): Promise<Bill> {
+    return await axios.post(`/shops/${shopCode}/bills`, {accountCode, commodities})
+}
+
+export async function deleteBill(shopCode: string, billCode: string): Promise<void> {
+    return await axios.delete(`/shops/${shopCode}/bills/${billCode}`)
+}
+
+export async function pay(shopCode: string, billCode: string, commodities: BillCommodity[], amount: number) {
+    return await axios.post(`/shops/${shopCode}/payment`, {
+        billCode,
+        commodities: commodities.map(item => ({code: item.code, quantity: item.quantity})),
+        amount,
+    })
 }
 
 export const shop = {
@@ -59,7 +93,12 @@ export const shop = {
     addShopAccount,
     listCommodities,
     addCommodity,
-    listInvoices,
+    listBillsOfShopAccount,
+    getBill,
+    topUp,
+    addBill,
+    deleteBill,
+    pay,
 }
 
 export default shop
