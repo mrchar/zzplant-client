@@ -69,7 +69,7 @@ export async function topUp(shopCode: string, accountCode: string, amount: numbe
     return await axios.post(`/shops/${shopCode}/accounts/${accountCode}/top-up`, {amount})
 }
 
-export async function addBill(shopCode: string, accountCode: string, commodities: Map<string, number>): Promise<Bill> {
+export async function addBill(shopCode: string, accountCode: string, commodities: BillCommodity[]): Promise<Bill> {
     return await axios.post(`/shops/${shopCode}/bills`, {accountCode, commodities})
 }
 
@@ -78,7 +78,11 @@ export async function deleteBill(shopCode: string, billCode: string): Promise<vo
 }
 
 export async function pay(shopCode: string, billCode: string, commodities: BillCommodity[], amount: number) {
-    return await axios.post(`/shops/${shopCode}/payment`, {billCode, commodities, amount})
+    return await axios.post(`/shops/${shopCode}/payment`, {
+        billCode,
+        commodities: commodities.map(item => ({code: item.code, quantity: item.quantity})),
+        amount,
+    })
 }
 
 export const shop = {

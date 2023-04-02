@@ -31,10 +31,16 @@ export interface BillCommodity {
 
 export interface Bill {
     code: string
-    createDateTime: Date
+    shop: string
+    shopAccount: string
     commodities: BillCommodity[]
     amount: number
-    currentBalance: number
-    shopAccount: string
-    shop: string
+    transaction: {
+        code: string
+        amount: number
+        previousBalance: number
+        currentBalance: number
+    }
+    operator: string
+    createDateTime: Date
 }

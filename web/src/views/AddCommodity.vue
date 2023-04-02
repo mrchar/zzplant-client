@@ -41,7 +41,9 @@ const addCommodity = () => {
                 <el-input v-model="formData.name"/>
             </el-form-item>
             <el-form-item label="价格">
-                <el-input v-model.number="formData.price"/>
+                <el-input v-model.number="formData.price">
+                    <template #prefix>￥</template>
+                </el-input>
             </el-form-item>
             <el-form-item>
                 <el-button class="w-full" type="primary" @click="addCommodity">

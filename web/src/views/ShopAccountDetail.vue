@@ -58,8 +58,8 @@ const listBills = () => {
             pagination.value.totalElements = res.totalElements
         })
         .catch((err) => {
-            console.error("获取交易记录失败", err)
-            ElMessage.error("获取交易记录失败")
+            console.error("获取订单记录失败", err)
+            ElMessage.error("获取订单记录失败")
         })
 }
 
@@ -87,7 +87,7 @@ function topUp() {
 }
 
 function onClickAddBill() {
-    api.shop.addBill(shop.value.code, shopAccount.value.code, new Map<string, number>())
+    api.shop.addBill(shop.value.code, shopAccount.value.code, [])
         .then((res) => {
             router.push({name: "AddBill", query: {billCode: res.code}})
         })
@@ -108,12 +108,14 @@ function onClickDelete(billCode: string) {
             api.shop.deleteBill(shop.value.code, billCode)
                 .then(() => {
                     ElMessage.success("删除成功！")
-                    listBills()
                 })
                 .catch(err => {
                     ElMessage.error("删除失败")
                     console.error("删除失败", err)
                 })
+                .finally(() => [
+                    listBills(),
+                ])
         })
 
 }
@@ -173,7 +175,7 @@ onBeforeMount(() => {
                 <el-button :icon="Search" @click="ElMessage('正在开发中...')"/>
             </template>
         </el-input>
-        <el-empty v-if="!hasBills" description="还没有任何交易"></el-empty>
+        <el-empty v-if="!hasBills" description="还没有任何订单"/>
         <div class="flex-1 overflow-y-auto">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-start">
                 <el-card v-for="bill in bills">
@@ -192,7 +194,12 @@ onBeforeMount(() => {
                         </el-descriptions-item>
                     </el-descriptions>
                     <div class="text-right">
-                        <el-button type="primary" @click="ElMessage('正在开发中...')">支付</el-button>
+                        <el-button
+                                v-if="!bill.transaction" type="primary"
+                                @click="router.push({name:'AddBill', query:{billCode:bill.code}})"
+                        >
+                            处理
+                        </el-button>
                         <el-button type="danger" @click="onClickDelete(bill.code)">删除</el-button>
                     </div>
                 </el-card>
@@ -222,7 +229,7 @@ onBeforeMount(() => {
                 </el-form-item>
             </el-form>
             <template #footer>
-                <el-button type="primary" @click="topUp">处理</el-button>
+                <el-button type="primary" @click="topUp">充值</el-button>
                 <el-button @click="showTopUpDialog=false">取消</el-button>
             </template>
         </el-drawer>

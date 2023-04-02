@@ -101,7 +101,7 @@ onMounted(() => {
                         <el-button type="success" @click.stop="ElMessage('正在开发中...')">充值</el-button>
                         <el-button
                                 type="primary"
-                                @click.stop="$router.push({name:'AddBill',query:{accountCode:account.code}})"
+                                @click.stop="ElMessage('正在开发中...')"
                         >
                             开单
                         </el-button>

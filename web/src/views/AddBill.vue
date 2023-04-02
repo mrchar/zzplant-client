@@ -20,9 +20,10 @@ const billCommodities = ref<BillCommodity[]>([])
 
 function getBillCommodityQuantity(code: string): number {
     const billCommodity = billCommodities.value.find(item => item.code === code)
-    if (billCommodity && billCommodity.quantity) {
+    if (billCommodity) {
         return billCommodity.quantity
     }
+
     return 0
 }
 
@@ -38,8 +39,11 @@ function setBillCommodityQuantity(code: string, quantity: number) {
         billCommodities.value.push(billCommodity)
     }
 
-    billCommodity.amount = billCommodity.price * billCommodity.quantity
     billCommodity.quantity = quantity
+    billCommodity.amount = billCommodity.price * billCommodity.quantity
+
+    // 移除所有数量为0的商品
+    billCommodities.value = billCommodities.value.filter(item => item.quantity !== 0)
 }
 
 const {shop} = storeToRefs(useShop())
@@ -63,7 +67,7 @@ function onClickSubmit() {
         })
         .catch(err => {
             ElMessage.error("支付失败")
-            
+
         })
 }
 
