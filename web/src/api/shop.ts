@@ -73,6 +73,10 @@ export async function addBill(shopCode: string, accountCode: string, commodities
     return await axios.post(`/shops/${shopCode}/bills`, {accountCode, commodities})
 }
 
+export async function deleteBill(shopCode: string, billCode: string): Promise<void> {
+    return await axios.delete(`/shops/${shopCode}/bills/${billCode}`)
+}
+
 export async function pay(shopCode: string, billCode: string, commodities: BillCommodity[], amount: number) {
     return await axios.post(`/shops/${shopCode}/payment`, {billCode, commodities, amount})
 }
@@ -89,6 +93,7 @@ export const shop = {
     getBill,
     topUp,
     addBill,
+    deleteBill,
     pay,
 }
 

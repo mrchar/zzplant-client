@@ -3,7 +3,7 @@ import {computed, onBeforeMount, ref} from "vue"
 import {useRoute, useRouter} from "vue-router"
 import {Search} from "@element-plus/icons-vue"
 import api from "../api"
-import {ElMessage} from "element-plus"
+import {ElMessage, ElMessageBox} from "element-plus"
 import {Bill, Shop, ShopAccount} from "../types"
 import ZzTitle from "../components/ZzTitle.vue"
 import {useShop} from "../store/shop"
@@ -97,6 +97,27 @@ function onClickAddBill() {
         })
 }
 
+function onClickDelete(billCode: string) {
+    ElMessageBox.confirm("当前操作无法撤销，确定要删除这个订单吗", "确定要删除这个订单吗？",
+        {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "error",
+        })
+        .then(() => {
+            api.shop.deleteBill(shop.value.code, billCode)
+                .then(() => {
+                    ElMessage.success("删除成功！")
+                    listBills()
+                })
+                .catch(err => {
+                    ElMessage.error("删除失败")
+                    console.error("删除失败", err)
+                })
+        })
+
+}
+
 onBeforeMount(() => {
     const code = route.query.code as string
 
@@ -156,17 +177,24 @@ onBeforeMount(() => {
         <div class="flex-1 overflow-y-auto">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-start">
                 <el-card v-for="bill in bills">
-                    <el-descriptions :title="bill.code" :extra="bill.createDateTime.toLocaleDateString()">
-                        <el-descriptions-item label="类型">
-                            {{ bill.amount > 0 ? "充值" : "消费" }}
+                    <el-descriptions :column="1">
+                        <el-descriptions-item label="订单号:">
+                            {{ bill.code }}
                         </el-descriptions-item>
-                        <el-descriptions-item label="金额(￥)">
-                            {{ bill.amount }}
+                        <el-descriptions-item label="商品列表:">
+                            {{ bill.commodities[0] ? bill.commodities[0].name + "..." : "暂无" }}
                         </el-descriptions-item>
-                        <el-descriptions-item label="余额(￥)">
-                            {{ bill.currentBalance }}
+                        <el-descriptions-item label="创建时间:">
+                            {{ bill.createDateTime.toLocaleString() }}
+                        </el-descriptions-item>
+                        <el-descriptions-item label="金额:">
+                            ￥ {{ bill.amount }}
                         </el-descriptions-item>
                     </el-descriptions>
+                    <div class="text-right">
+                        <el-button type="primary" @click="ElMessage('正在开发中...')">支付</el-button>
+                        <el-button type="danger" @click="onClickDelete(bill.code)">删除</el-button>
+                    </div>
                 </el-card>
             </div>
         </div>
@@ -194,7 +222,7 @@ onBeforeMount(() => {
                 </el-form-item>
             </el-form>
             <template #footer>
-                <el-button type="primary" @click="topUp">充值</el-button>
+                <el-button type="primary" @click="topUp">处理</el-button>
                 <el-button @click="showTopUpDialog=false">取消</el-button>
             </template>
         </el-drawer>
