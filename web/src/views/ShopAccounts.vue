@@ -7,6 +7,7 @@ import {ElMessage} from "element-plus"
 import {useShop} from "../store/shop"
 import {ShopAccount} from "../types"
 import ZzTitle from "../components/ZzTitle.vue"
+import {ApiError} from "../api/base"
 
 const store = useShop()
 
