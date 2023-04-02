@@ -18,7 +18,7 @@ export interface ShopAccount {
 export interface Commodity {
     code: string
     name: string
-    price: string
+    price: number
 }
 
 export interface BillCommodity {
@@ -31,7 +31,7 @@ export interface BillCommodity {
 
 export interface Bill {
     code: string
-    datetime: Date
+    createDateTime: Date
     commodities: BillCommodity[]
     amount: number
     currentBalance: number

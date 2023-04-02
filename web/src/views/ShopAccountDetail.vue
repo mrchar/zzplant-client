@@ -49,9 +49,12 @@ const hasBills = computed((): boolean => {
 })
 
 const listBills = () => {
-    api.shop.listBills(shop.value.code, shopAccountCode.value)
+    api.shop.listBillsOfShopAccount(shop.value.code, shopAccountCode.value)
         .then((res) => {
-            bills.value = res.content
+            bills.value = res.content.map(item => {
+                item.createDateTime = new Date(item.createDateTime)
+                return item
+            })
             pagination.value.totalElements = res.totalElements
         })
         .catch((err) => {
@@ -83,12 +86,15 @@ function topUp() {
         })
 }
 
-
-const showConsumeDialog = ref(false)
-const balanceToPay = ref(0)
-
-function consume() {
-
+function onClickAddBill() {
+    api.shop.addBill(shop.value.code, shopAccount.value.code, new Map<string, number>())
+        .then((res) => {
+            router.push({name: "AddBill", query: {billCode: res.code}})
+        })
+        .catch((err) => {
+            ElMessage.error("创建订单失败")
+            console.error("创建订单失败", err)
+        })
 }
 
 onBeforeMount(() => {
@@ -112,7 +118,7 @@ onBeforeMount(() => {
         <div class="w-full">
             <zz-title title="会员信息">
                 <template #extra>
-                    <el-button link @click="()=>{ElMessage.info('正在开发中...')}">编辑</el-button>
+                    <el-button link @click="ElMessage('正在开发中...')">更多</el-button>
                 </template>
             </zz-title>
             <el-descriptions :column="1">
@@ -132,7 +138,7 @@ onBeforeMount(() => {
         <zz-title title="消费记录">
             <template #extra>
                 <el-button type="success" @click="showTopUpDialog=true">充值</el-button>
-                <el-button type="primary" @click="showConsumeDialog=true">开单</el-button>
+                <el-button type="primary" @click="onClickAddBill">开单</el-button>
             </template>
         </zz-title>
         <el-input
@@ -150,7 +156,7 @@ onBeforeMount(() => {
         <div class="flex-1 overflow-y-auto">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-start">
                 <el-card v-for="bill in bills">
-                    <el-descriptions :title="bill.code" :extra="bill.datetime.toLocaleDateString()">
+                    <el-descriptions :title="bill.code" :extra="bill.createDateTime.toLocaleDateString()">
                         <el-descriptions-item label="类型">
                             {{ bill.amount > 0 ? "充值" : "消费" }}
                         </el-descriptions-item>
@@ -192,24 +198,5 @@ onBeforeMount(() => {
                 <el-button @click="showTopUpDialog=false">取消</el-button>
             </template>
         </el-drawer>
-        <el-drawer v-model="showConsumeDialog" direction="btt" size="40%">
-            <template #header>
-                <zz-title title="开单"/>
-            </template>
-            <el-form label-position="top">
-                <el-form-item label="金额">
-                    <el-input v-model="balanceToPay">
-                        <template #prefix>
-                            ￥
-                        </template>
-                    </el-input>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <el-button type="primary" @click="consume">支付</el-button>
-                <el-button @click="showConsumeDialog=false">取消</el-button>
-            </template>
-        </el-drawer>
     </div>
 </template>
-
