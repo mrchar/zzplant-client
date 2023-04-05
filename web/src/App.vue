@@ -3,10 +3,13 @@ import {storeToRefs} from "pinia"
 import {useLanguage} from "./store/language"
 import ZzHeader from "./components/ZzHeader.vue"
 import "element-plus/theme-chalk/dark/css-vars.css"
+import VConsole from "vconsole"
 
 const store = useLanguage()
 
 const {locale} = storeToRefs(store)
+
+const vConsole = new VConsole()
 
 </script>
 
