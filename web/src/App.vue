@@ -9,7 +9,9 @@ const store = useLanguage()
 
 const {locale} = storeToRefs(store)
 
-const vConsole = new VConsole()
+if (!import.meta.env.PROD) {
+    const vConsole = new VConsole()
+}
 
 </script>
 
