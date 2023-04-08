@@ -1,4 +1,4 @@
-package com.github.mrchar.zzplant;
+package net.mrchar.zzplant;
 
 import com.getcapacitor.BridgeActivity;
 
