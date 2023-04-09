@@ -5,10 +5,11 @@ import ZzHeader from "./components/ZzHeader.vue"
 import "element-plus/theme-chalk/dark/css-vars.css"
 import VConsole from "vconsole"
 import {App} from "@capacitor/app"
-import {useRouter} from "vue-router"
+import {useRoute, useRouter} from "vue-router"
 import {ElMessage} from "element-plus"
 
 const store = useLanguage()
+const route = useRoute()
 const router = useRouter()
 
 const {locale} = storeToRefs(store)
@@ -16,7 +17,7 @@ const {locale} = storeToRefs(store)
 let canExit = false
 App.addListener("backButton", (canGoBack) => {
     // 如果可以返回上一下
-    if (canGoBack) {
+    if (canGoBack && route.name !== "Crossroad") {
         return router.back()
     }
 
