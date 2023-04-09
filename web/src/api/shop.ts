@@ -53,7 +53,7 @@ export async function addCommodity(shopCode: string, params: AddCommodityParams)
  * @param accountCode
  */
 export async function listBillsOfShopAccount(shopCode: string, accountCode: string): Promise<PagedResponse<Bill>> {
-    return await axios.get(`/shops/${shopCode}/accounts/${accountCode}/bills`)
+    return await axios.get(`/shops/${shopCode}/accounts/${accountCode}/bills?sort=createDateTime,desc`)
 }
 
 /**
