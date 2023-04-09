@@ -93,7 +93,7 @@ onMounted(() => {
                 <el-card v-for="account in accounts" :key="account.code" @click="toDetails(account)">
                     <el-descriptions :title="account.name" :extra="account.code" :column="2">
                         <el-descriptions-item label="手机号码:">
-                            {{ account.phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1****$3") }}
+                            {{ account.phoneNumber.replace(/(\d{3})(\d{4})(\d+)/, "$1****$3") }}
                         </el-descriptions-item>
                         <el-descriptions-item label="余额:">
                             {{ `￥${account.balance}` }}

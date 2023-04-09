@@ -120,7 +120,7 @@ onBeforeMount(() => {
             </zz-title>
             <el-descriptions :column="1">
                 <el-descriptions-item label="称呼">
-                    {{ shopAccount.name + (" " + nameSuffix.get(shopAccount.gender.toLowerCase()) || "") }}
+                    {{ shopAccount.name + " " + (nameSuffix.get(shopAccount.gender.toLowerCase()) || "") }}
                 </el-descriptions-item>
                 <el-descriptions-item label="手机号码">
                     {{ shopAccount.phoneNumber }}
