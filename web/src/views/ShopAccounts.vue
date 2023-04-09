@@ -8,6 +8,7 @@ import {useShop} from "../store/shop"
 import {ShopAccount} from "../types"
 import ZzTitle from "../components/ZzTitle.vue"
 import {ApiError} from "../api/base"
+import TopUpButton from "../components/shop/TopUpButton.vue"
 
 const store = useShop()
 
@@ -99,7 +100,9 @@ onMounted(() => {
                         </el-descriptions-item>
                     </el-descriptions>
                     <div class="flex justify-end">
-                        <el-button type="success" @click.stop="ElMessage('正在开发中...')">充值</el-button>
+                        <top-up-button :shop-code="shopCode"
+                                       :shop-account-code="account.code"
+                                       @success="listShopAccounts()"/>
                         <el-button
                                 type="primary"
                                 @click.stop="ElMessage('正在开发中...')"
