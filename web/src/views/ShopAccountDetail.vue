@@ -45,7 +45,7 @@ const getShopAccount = () => {
 const bills = ref<Bill[]>([])
 
 const hasBills = computed((): boolean => {
-    return bills && bills.value.length > 0
+    return bills.value && bills.value.length > 0
 })
 
 const listBills = () => {

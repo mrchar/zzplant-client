@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {useShop} from "../store/shop"
-import {onMounted} from "vue"
+import {computed, onMounted} from "vue"
 import {useRouter} from "vue-router"
 import {Search} from "@element-plus/icons-vue"
 import {ElMessage} from "element-plus"
@@ -12,6 +12,10 @@ const router = useRouter()
 const {shop} = storeToRefs(useShop())
 
 const {keyword, pagination, commodities, listCommodities} = useCommodity(shop)
+
+const hasCommodities = computed(() => {
+    return commodities.value && commodities.value.length > 0
+})
 
 onMounted(() => {
     listCommodities()
@@ -54,6 +58,7 @@ onMounted(() => {
             <el-button type="primary" size="large" @click="router.push('/commodities/add')">添加</el-button>
         </div>
         <div class="flex-1 overflow-y-auto">
+            <el-empty v-if="!hasCommodities" description="还没有任何商品"/>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-start">
                 <el-card v-for="commodity in commodities">
                     <el-descriptions
