@@ -7,6 +7,8 @@ import {ElMessage, ElMessageBox} from "element-plus"
 import {Bill, Shop, ShopAccount} from "../types"
 import ZzTitle from "../components/ZzTitle.vue"
 import {useShop} from "../store/shop"
+import TopUpButton from "../components/shop/TopUpButton.vue"
+import AddBillButton from "../components/shop/AddBillButton.vue"
 
 const nameSuffix = new Map([["male", "先生"], ["female", "女士"]])
 
@@ -45,7 +47,7 @@ const getShopAccount = () => {
 const bills = ref<Bill[]>([])
 
 const hasBills = computed((): boolean => {
-    return bills && bills.value.length > 0
+    return bills.value && bills.value.length > 0
 })
 
 const listBills = () => {
@@ -68,34 +70,6 @@ const pagination = ref({
     currentPage: 1,
     totalElements: 0,
 })
-
-const showTopUpDialog = ref(false)
-const balanceToAdd = ref(0)
-
-function topUp() {
-    api.shop.topUp(shop.value.code, shopAccount.value.code, balanceToAdd.value)
-        .then(res => {
-            ElMessage.success("充值成功！")
-            getShopAccount()
-        })
-        .catch(err => {
-            ElMessage.error("充值失败！")
-        })
-        .finally(() => {
-            showTopUpDialog.value = false
-        })
-}
-
-function onClickAddBill() {
-    api.shop.addBill(shop.value.code, shopAccount.value.code, [])
-        .then((res) => {
-            router.push({name: "AddBill", query: {billCode: res.code}})
-        })
-        .catch((err) => {
-            ElMessage.error("创建订单失败")
-            console.error("创建订单失败", err)
-        })
-}
 
 function onClickDelete(billCode: string) {
     ElMessageBox.confirm("当前操作无法撤销，确定要删除这个订单吗", "确定要删除这个订单吗？",
@@ -146,7 +120,7 @@ onBeforeMount(() => {
             </zz-title>
             <el-descriptions :column="1">
                 <el-descriptions-item label="称呼">
-                    {{ shopAccount.name + (" " + nameSuffix.get(shopAccount.gender.toLowerCase()) || "") }}
+                    {{ shopAccount.name + " " + (nameSuffix.get(shopAccount.gender.toLowerCase()) || "") }}
                 </el-descriptions-item>
                 <el-descriptions-item label="手机号码">
                     {{ shopAccount.phoneNumber }}
@@ -160,8 +134,11 @@ onBeforeMount(() => {
         </div>
         <zz-title title="消费记录">
             <template #extra>
-                <el-button type="success" @click="showTopUpDialog=true">充值</el-button>
-                <el-button type="primary" @click="onClickAddBill">开单</el-button>
+                <top-up-button :shop-code="shop.code"
+                               :shop-account-code="shopAccountCode"
+                               @success="getShopAccount()"/>
+                <add-bill-button :shop-code="shop.code"
+                                 :shop-account-code="shopAccountCode"/>
             </template>
         </zz-title>
         <el-input
@@ -184,7 +161,9 @@ onBeforeMount(() => {
                             {{ bill.code }}
                         </el-descriptions-item>
                         <el-descriptions-item label="商品列表:">
-                            {{ bill.commodities[0] ? bill.commodities[0].name + "..." : "暂无" }}
+                            <p class="inline-block align-bottom w-32 truncate">
+                                {{ bill.commodities ? bill.commodities.map(item => item.name).join(",") : "暂无" }}
+                            </p>
                         </el-descriptions-item>
                         <el-descriptions-item label="创建时间:">
                             {{ bill.createDateTime.toLocaleString() }}
@@ -215,23 +194,5 @@ onBeforeMount(() => {
                 @size-change="listBills"
         >
         </el-pagination>
-        <el-drawer v-model="showTopUpDialog" direction="btt" size="40%">
-            <template #header>
-                <zz-title title="充值"/>
-            </template>
-            <el-form label-width="60" label-position="top">
-                <el-form-item label="金额">
-                    <el-input v-model="balanceToAdd">
-                        <template #prefix>
-                            ￥
-                        </template>
-                    </el-input>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <el-button type="primary" @click="topUp">充值</el-button>
-                <el-button @click="showTopUpDialog=false">取消</el-button>
-            </template>
-        </el-drawer>
     </div>
 </template>

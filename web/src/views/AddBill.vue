@@ -67,7 +67,18 @@ function onClickSubmit() {
         })
         .catch(err => {
             ElMessage.error("支付失败")
+        })
+}
 
+function onClickDelete() {
+    api.shop.deleteBill(shop.value.code, billCode.value)
+        .then(() => {
+            ElMessage.success("删除成功！")
+            router.go(-1)
+        })
+        .catch(err => {
+            ElMessage.error("删除失败")
+            console.error("删除失败", err)
         })
 }
 
@@ -133,7 +144,7 @@ onMounted(() => {
                 </div>
             </div>
             <div>
-                <el-button size="large">删除</el-button>
+                <el-button size="large" @click="onClickDelete()">删除</el-button>
                 <el-button
                         size="large"
                         type="primary"

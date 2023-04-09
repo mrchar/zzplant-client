@@ -3,10 +3,12 @@ import {computed, onMounted, ref} from "vue"
 import {Search} from "@element-plus/icons-vue"
 import {useRouter} from "vue-router"
 import api from "../api"
-import {ElMessage} from "element-plus"
 import {useShop} from "../store/shop"
 import {ShopAccount} from "../types"
 import ZzTitle from "../components/ZzTitle.vue"
+import {ApiError} from "../api/base"
+import TopUpButton from "../components/shop/TopUpButton.vue"
+import AddBillButton from "../components/shop/AddBillButton.vue"
 
 const store = useShop()
 
@@ -91,20 +93,18 @@ onMounted(() => {
                 <el-card v-for="account in accounts" :key="account.code" @click="toDetails(account)">
                     <el-descriptions :title="account.name" :extra="account.code" :column="2">
                         <el-descriptions-item label="手机号码:">
-                            {{ account.phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1****$3") }}
+                            {{ account.phoneNumber.replace(/(\d{3})(\d{4})(\d+)/, "$1****$3") }}
                         </el-descriptions-item>
                         <el-descriptions-item label="余额:">
                             {{ `￥${account.balance}` }}
                         </el-descriptions-item>
                     </el-descriptions>
                     <div class="flex justify-end">
-                        <el-button type="success" @click.stop="ElMessage('正在开发中...')">充值</el-button>
-                        <el-button
-                                type="primary"
-                                @click.stop="ElMessage('正在开发中...')"
-                        >
-                            开单
-                        </el-button>
+                        <top-up-button :shop-code="shopCode"
+                                       :shop-account-code="account.code"
+                                       @success="listShopAccounts()"/>
+                        <add-bill-button :shop-code="shopCode"
+                                         :shop-account-code="account.code"/>
                     </div>
                 </el-card>
             </div>

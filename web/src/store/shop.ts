@@ -10,11 +10,11 @@ export const useShop = defineStore("shop", () => {
     }
 
     const saveSelected = () => {
-        sessionStorage.setItem("selectedShop", JSON.stringify(selected.value))
+        localStorage.setItem("selectedShop", JSON.stringify(selected.value))
     }
 
     const loadSelected = () => {
-        const loaded = sessionStorage.getItem("selectedShop")
+        const loaded = localStorage.getItem("selectedShop")
         if (loaded) {
             selected.value = JSON.parse(loaded) as Shop
         }
