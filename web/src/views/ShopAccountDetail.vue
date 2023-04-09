@@ -161,7 +161,9 @@ onBeforeMount(() => {
                             {{ bill.code }}
                         </el-descriptions-item>
                         <el-descriptions-item label="商品列表:">
-                            {{ bill.commodities[0] ? bill.commodities[0].name + "..." : "暂无" }}
+                            <p class="inline-block align-bottom w-32 truncate">
+                                {{ bill.commodities ? bill.commodities.map(item => item.name).join(",") : "暂无" }}
+                            </p>
                         </el-descriptions-item>
                         <el-descriptions-item label="创建时间:">
                             {{ bill.createDateTime.toLocaleString() }}
