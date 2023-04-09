@@ -3,12 +3,12 @@ import {computed, onMounted, ref} from "vue"
 import {Search} from "@element-plus/icons-vue"
 import {useRouter} from "vue-router"
 import api from "../api"
-import {ElMessage} from "element-plus"
 import {useShop} from "../store/shop"
 import {ShopAccount} from "../types"
 import ZzTitle from "../components/ZzTitle.vue"
 import {ApiError} from "../api/base"
 import TopUpButton from "../components/shop/TopUpButton.vue"
+import AddBillButton from "../components/shop/AddBillButton.vue"
 
 const store = useShop()
 
@@ -103,12 +103,8 @@ onMounted(() => {
                         <top-up-button :shop-code="shopCode"
                                        :shop-account-code="account.code"
                                        @success="listShopAccounts()"/>
-                        <el-button
-                                type="primary"
-                                @click.stop="ElMessage('正在开发中...')"
-                        >
-                            开单
-                        </el-button>
+                        <add-bill-button :shop-code="shopCode"
+                                         :shop-account-code="account.code"/>
                     </div>
                 </el-card>
             </div>

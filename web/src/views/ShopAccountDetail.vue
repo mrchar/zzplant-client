@@ -8,6 +8,7 @@ import {Bill, Shop, ShopAccount} from "../types"
 import ZzTitle from "../components/ZzTitle.vue"
 import {useShop} from "../store/shop"
 import TopUpButton from "../components/shop/TopUpButton.vue"
+import AddBillButton from "../components/shop/AddBillButton.vue"
 
 const nameSuffix = new Map([["male", "先生"], ["female", "女士"]])
 
@@ -69,17 +70,6 @@ const pagination = ref({
     currentPage: 1,
     totalElements: 0,
 })
-
-function onClickAddBill() {
-    api.shop.addBill(shop.value.code, shopAccount.value.code, [])
-        .then((res) => {
-            router.push({name: "AddBill", query: {billCode: res.code}})
-        })
-        .catch((err) => {
-            ElMessage.error("创建订单失败")
-            console.error("创建订单失败", err)
-        })
-}
 
 function onClickDelete(billCode: string) {
     ElMessageBox.confirm("当前操作无法撤销，确定要删除这个订单吗", "确定要删除这个订单吗？",
@@ -147,7 +137,8 @@ onBeforeMount(() => {
                 <top-up-button :shop-code="shop.code"
                                :shop-account-code="shopAccountCode"
                                @success="getShopAccount()"/>
-                <el-button type="primary" @click="onClickAddBill">开单</el-button>
+                <add-bill-button :shop-code="shop.code"
+                                 :shop-account-code="shopAccountCode"/>
             </template>
         </zz-title>
         <el-input
