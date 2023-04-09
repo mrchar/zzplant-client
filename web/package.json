@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@capacitor/android": "^4.6.1",
+    "@capacitor/app": "^4.1.1",
     "@capacitor/core": "^4.6.1",
     "@capacitor/ios": "^4.6.1",
     "@element-plus/icons-vue": "^2.0.10",
