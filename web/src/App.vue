@@ -6,7 +6,7 @@ import "element-plus/theme-chalk/dark/css-vars.css"
 import VConsole from "vconsole"
 import {App} from "@capacitor/app"
 import {useRoute, useRouter} from "vue-router"
-import {ElMessage} from "element-plus"
+import {Toast} from "@capacitor/toast"
 
 const store = useLanguage()
 const route = useRoute()
@@ -17,18 +17,18 @@ const {locale} = storeToRefs(store)
 let canExit = false
 App.addListener("backButton", (canGoBack) => {
     // 如果可以返回上一下
-    if (canGoBack && route.name !== "Crossroad") {
+    if (canGoBack && route.name !== "ShopAccounts") {
         return router.back()
     }
 
     // 不过不能退出App，修改标记并提示
     if (!canExit) {
         canExit = true
-        ElMessage("再次点击返回键退出应用!")
+        Toast.show({text: "再次点击返回键退出应用!"})
 
         setTimeout(() => {
             canExit = false
-        }, 500)
+        }, 2000)
         return
     }
 

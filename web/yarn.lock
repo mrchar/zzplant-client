@@ -59,6 +59,11 @@
   resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-4.6.1.tgz#e6c03bbf1c9bce116bfbc71cb231afbb1bd5b7fc"
   integrity sha512-kH1nPG2jCk7w6ASf2VX+tIxHoc2Z/c5+7d89yvtiKmEZXoPLuVyAv/Yx4PhJP2r7KSyl5S2gZZkzQrMdAjDVKg==
 
+"@capacitor/toast@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@capacitor/toast/-/toast-4.1.0.tgz#1710163aa128f8640d2237587cfb49ad4ee880c5"
+  integrity sha512-hU3GoA1dT+dsMuDOlEeiaU2mdd4VCLvIzgbp7Vk0Mqy9tbg++W4t7hcewlawzJGs6FxH59rIekf2lz7m4ir33w==
+
 "@ctrl/tinycolor@^3.4.1":
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.4.1.tgz#75b4c27948c81e88ccd3a8902047bcd797f38d32"
