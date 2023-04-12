@@ -2,12 +2,12 @@
 import {ShoppingCart, ShoppingCartFull} from "@element-plus/icons-vue"
 import ZzTitle from "../components/ZzTitle.vue"
 import {useCommodity} from "../composables/commodity"
-import {computed, onBeforeMount, onMounted, ref} from "vue"
+import {computed, onBeforeMount, ref} from "vue"
 import {useShop} from "../store/shop"
-import {useRoute, useRouter} from "vue-router"
+import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router"
 import {storeToRefs} from "pinia"
 import {BillCommodity, Commodity} from "../types"
-import {ElMessage} from "element-plus"
+import {ElMessage, ElMessageBox} from "element-plus"
 import api from "../api"
 
 const route = useRoute()
@@ -17,6 +17,13 @@ const router = useRouter()
 const billCode = ref("")
 
 const billCommodities = ref<BillCommodity[]>([])
+
+function listBillCommodities() {
+    api.shop.getBill(shop.value.code, billCode.value)
+        .then(res => {
+            billCommodities.value = res.commodities
+        })
+}
 
 function getBillCommodityQuantity(code: string): number {
     const billCommodity = billCommodities.value.find(item => item.code === code)
@@ -50,7 +57,6 @@ const {shop} = storeToRefs(useShop())
 
 const {keyword, pagination, commodities, listCommodities} = useCommodity(shop)
 
-
 const amount = computed(() => {
     return billCommodities.value
         .map(item => item.amount)
@@ -59,10 +65,13 @@ const amount = computed(() => {
 
 const showPaymentDialog = ref(false)
 
+let confirmed = false
+
 function onClickSubmit() {
     api.shop.pay(shop.value.code, billCode.value, billCommodities.value, amount.value)
         .then(() => {
             showPaymentDialog.value = false
+            confirmed = true
             router.go(-1)
         })
         .catch(err => {
@@ -89,14 +98,47 @@ onBeforeMount(() => {
         return
     }
 
-    api.shop.getBill(shop.value.code, billCode.value)
-        .then(res => {
-            billCommodities.value = res.commodities
-        })
+    // 获取商品列表
+    listCommodities()
+
+    // 获取订单
+    listBillCommodities()
+
 })
 
-onMounted(() => {
-    listCommodities()
+onBeforeRouteLeave(async (to, from) => {
+    if (confirmed) {
+        return true
+    }
+
+    try {
+        await ElMessageBox({
+            title: "是否保留未支付的订单？",
+            message: "当前账单没有支付，是否需要保留订单？",
+            showClose: false,
+            showCancelButton: true,
+            confirmButtonText: "保存",
+            cancelButtonText: "删除",
+            cancelButtonClass: "el-button--danger",
+        })
+        try {
+            await api.shop.updateBillCommodities(shop.value.code, billCode.value, billCommodities.value)
+            ElMessage.success("保存成功！")
+            return true
+        } catch (err) {
+            ElMessage.error("保存失败！")
+            return false
+        }
+    } catch (err) {
+        try {
+            await api.shop.deleteBill(shop.value.code, billCode.value)
+            ElMessage.success("删除成功！")
+            return true
+        } catch (err) {
+            ElMessage.error("删除失败！")
+            return false
+        }
+    }
 })
 
 </script>
