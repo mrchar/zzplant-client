@@ -25,6 +25,11 @@ async function getProfile() {
 }
 
 function selectRoute() {
+    if (auth.authenticated !== "Authenticated") {
+        router.push({path: "/login"})
+        return
+    }
+
     // 如果当前没有选择店铺
     api.shop.listShops()
         .then(res => {
