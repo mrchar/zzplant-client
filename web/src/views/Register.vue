@@ -4,8 +4,12 @@ import api from "../api"
 import {useRouter} from "vue-router"
 import ZzTitle from "../components/ZzTitle.vue"
 import {ElMessage} from "element-plus"
+import {useAuth} from "../store/auth"
 
 const router = useRouter()
+
+const auth = useAuth()
+auth.setAuthenticated("Unauthenticated")
 
 const formData = ref({phoneNumber: "", password: ""})
 
