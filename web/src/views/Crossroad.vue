@@ -1,23 +1,37 @@
 <script lang="ts" setup>
 import {useShop} from "../store/shop"
 import api from "../api"
-import {useRouter} from "vue-router"
-import {ElMessage} from "element-plus"
+import {useRoute, useRouter} from "vue-router"
 import {onMounted, ref} from "vue"
+import {useAuth} from "../store/auth"
+import {ElMessage} from "element-plus"
 
+const auth = useAuth()
 const store = useShop()
+const route = useRoute()
 const router = useRouter()
 
 const loading = ref(true)
 
-onMounted(() => {
+async function getProfile() {
+    try {
+        const profile = await api.auth.getProfile()
+        auth.setProfile(profile)
+        auth.setAuthenticated("Authenticated")
+    } catch (error) {
+        console.debug("获取用户信息失败，将登录状态设置为未验证")
+        auth.setAuthenticated("Unauthenticated")
+    }
+}
+
+function selectRoute() {
     // 如果当前没有选择店铺
     api.shop.listShops()
         .then(res => {
             if (res.empty) {
                 // 还没有创建店铺，跳转到新增页面
                 store.selectShop(null)
-                router.push("/shops/add")
+                router.push({path: "/shops/add"})
                 return
             }
 
@@ -28,20 +42,22 @@ onMounted(() => {
             // 如果没有选择商铺，跳转到商铺选择页面
             const selected = store.selected
             if (selected == null) {
-                router.push("/shops")
+                router.push({path: "/shops"})
                 return
             }
 
-            // 查找商铺信息
-            const refreshed = shops.find(shop => shop.code === selected.code)
+            // 查找商铺信息，如果不存在，重新选择商铺
+            const refreshed = shops.find(item => item.code === selected.code)
             if (!refreshed) {
                 store.selectShop(null)
-                router.push("/shop/select")
+                router.push({path: "/shops"})
                 return
             }
 
             // 如果商铺信息存在，更新商铺信息
             store.selectShop(refreshed)
+
+            // 否则跳转到店铺主页
             router.push("/shop-accounts")
         })
         .catch((err) => {
@@ -51,6 +67,14 @@ onMounted(() => {
         .finally(() => {
             loading.value = false
         })
+}
+
+onMounted(async () => {
+    if (auth.authenticated === "Unknown") {
+        await getProfile()
+    }
+
+    selectRoute()
 })
 </script>
 

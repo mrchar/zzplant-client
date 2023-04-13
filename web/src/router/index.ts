@@ -1,6 +1,5 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router"
 import {useAuth} from "../store/auth"
-import api from "../api"
 import Crossroad from "../views/Crossroad.vue"
 
 const routes: RouteRecordRaw[] = [
@@ -27,33 +26,27 @@ export const router = createRouter({
     history: createWebHistory(),
 })
 
-const doesNotNeedAuthenticationPath: string[] = ["/register", "/login"]
+const doesNotNeedAuthenticationPath: string[] = ["/register", "/login", "/crossroad"]
 
 router.beforeEach(async (to) => {
-    const store = useAuth()
+    console.debug("go to", to)
 
-    if (store.authenticated === "Unknown") {
-        try {
-            const profile = await api.auth.getProfile()
-            store.setProfile(profile)
-            store.setAuthenticated("Authenticated")
-        } catch (error) {
-            console.debug("获取用户信息失败，将登录状态设置为未验证")
-            store.setAuthenticated("Unauthenticated")
-        }
+    // 如果不需要登录直接跳转
+    const needAuthentication = !doesNotNeedAuthenticationPath.includes(to.path)
+    if (!needAuthentication) {
+        return
     }
 
-    const needAuthentication = !doesNotNeedAuthenticationPath.includes(to.path)
-    const authenticated = store.authenticated === "Authenticated"
+    const auth = useAuth()
+    // 如果登录状态是Unknown，跳转到crossroad
+    if (auth.authenticated === "Unknown") {
+        return {path: "/crossroad"}
+    }
+
+    // 如果需要登录但是没有登录，跳转到登陆页面
+    const authenticated = auth.authenticated === "Authenticated"
     if (needAuthentication && !authenticated) {
         return {path: "/login"}
-    }
-
-    if (!needAuthentication && authenticated) {
-        if (to.query && to.query.referer) {
-            return {path: to.query.referer as string}
-        }
-        return {path: "/"}
     }
 })
 
