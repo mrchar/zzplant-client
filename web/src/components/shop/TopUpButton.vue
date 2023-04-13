@@ -12,11 +12,23 @@ const {shopCode, shopAccountCode} = defineProps({
 const emits = defineEmits(["success"])
 
 const showTopUpDialog = ref(false)
-const balanceToAdd = ref(0)
+const balanceToAdd = ref<number | null>(0)
+
+function onInputBlur() {
+    if (balanceToAdd.value === null) {
+        balanceToAdd.value = 0
+    }
+}
 
 function topUp() {
+    if (!balanceToAdd.value) {
+        ElMessage.warning("请输入充值的金额")
+        return
+    }
+
     api.shop.topUp(shopCode, shopAccountCode, balanceToAdd.value)
         .then(res => {
+            balanceToAdd.value = 0
             ElMessage.success("充值成功！")
             emits("success")
         })
@@ -35,18 +47,21 @@ function topUp() {
         <template #header>
             <zz-title title="充值"/>
         </template>
-        <el-form label-width="60" label-position="top">
-            <el-form-item label="金额">
-                <el-input v-model="balanceToAdd">
-                    <template #prefix>
-                        ￥
-                    </template>
-                </el-input>
+        <el-form size="large" label-width="60">
+            <el-form-item label="金额：">
+                <el-input-number
+                        v-model="balanceToAdd"
+                        :max="9999999" :min="0"
+                        :precision="2"
+                        :value-on-clear="0"
+                        @focus="balanceToAdd=null"
+                        @blur="onInputBlur()"
+                />
             </el-form-item>
         </el-form>
         <template #footer>
-            <el-button type="primary" @click="topUp()">充值</el-button>
-            <el-button @click="showTopUpDialog=false">取消</el-button>
+            <el-button size="large" type="primary" @click="topUp()">充值</el-button>
+            <el-button size="large" @click="showTopUpDialog=false">取消</el-button>
         </template>
     </el-drawer>
 </template>
