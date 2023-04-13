@@ -7,9 +7,7 @@ import VConsole from "vconsole"
 import {App} from "@capacitor/app"
 import {useRoute, useRouter} from "vue-router"
 import {Toast} from "@capacitor/toast"
-import {useAuth} from "./store/auth"
 
-const store = useAuth()
 const language = useLanguage()
 const route = useRoute()
 const router = useRouter()
@@ -19,7 +17,7 @@ const {locale} = storeToRefs(language)
 let canExit = false
 App.addListener("backButton", (canGoBack) => {
     // 如果可以返回上一下
-    if (canGoBack && route.name !== "ShopAccounts") {
+    if (canGoBack && route.name !== "ShopAccounts" && route.name !== "Login") {
         return router.back()
     }
 
@@ -47,7 +45,7 @@ if (!import.meta.env.PROD) {
 
 <template>
     <el-config-provider :locale="locale">
-        <div v-loading.fullscreen="store.authenticated==='Unknown'" class="full-screen flex flex-col gap-2">
+        <div class="full-screen flex flex-col gap-2">
             <zz-header class="max-w-7xl w-full mx-auto"/>
             <main class="content-container">
                 <router-view/>
