@@ -47,15 +47,15 @@ function topUp() {
         <template #header>
             <zz-title title="充值"/>
         </template>
-        <el-form label-width="60">
-            <el-form-item size="large" label="金额：">
-                <el-input-number size="large"
-                                 v-model="balanceToAdd"
-                                 :max="9999999" :min="0"
-                                 :precision="2"
-                                 :value-on-clear="0"
-                                 @focus="balanceToAdd=null"
-                                 @blur="onInputBlur()"
+        <el-form size="large" label-width="60">
+            <el-form-item label="金额：">
+                <el-input-number
+                        v-model="balanceToAdd"
+                        :max="9999999" :min="0"
+                        :precision="2"
+                        :value-on-clear="0"
+                        @focus="balanceToAdd=null"
+                        @blur="onInputBlur()"
                 />
             </el-form-item>
         </el-form>
