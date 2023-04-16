@@ -11,7 +11,7 @@ const router = useRouter()
 
 const {shop} = storeToRefs(useShop())
 
-const {keyword, pagination, commodities, listCommodities} = useCommodity(shop)
+const {keyword, pagination, commodities, listCommodities, deleteShopCommodity} = useCommodity(shop)
 
 const hasCommodities = computed(() => {
     return commodities.value && commodities.value.length > 0
@@ -79,6 +79,7 @@ onMounted(() => {
                     <div>
                         <el-button type="primary" @click="ElMessage.info('正在开发中...')">开单</el-button>
                         <el-button @click="ElMessage.info('正在开发中...')">编辑</el-button>
+                        <el-button type="danger" @click="deleteShopCommodity(commodity.code)">删除</el-button>
                     </div>
                 </el-card>
             </div>
