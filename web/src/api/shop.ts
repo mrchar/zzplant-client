@@ -47,6 +47,10 @@ export async function addCommodity(shopCode: string, params: AddCommodityParams)
     return await axios.post(`/shops/${shopCode}/commodities`, params)
 }
 
+export async function deleteShopCommodity(shopCode: string, commodityCode: string): Promise<Commodity> {
+    return await axios.delete(`/shops/${shopCode}/commodities/${commodityCode}`)
+}
+
 /**
  * 获取商铺会员的所有订单
  * @param shopCode
@@ -99,6 +103,7 @@ export const shop = {
     addShopAccount,
     listCommodities,
     addCommodity,
+    deleteShopCommodity,
     listBillsOfShopAccount,
     getBill,
     topUp,
